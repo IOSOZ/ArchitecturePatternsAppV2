@@ -18,7 +18,7 @@ struct Pattern {
         self.name = "Прототип"
         self.description = "Прототип — это порождающий паттерн проектирования, который позволяет копировать объекты, не вдаваясь в подробности их реализации."
         self.image = "prototype"
-        self.viewCounter = 0
     }
+    
     
 }
