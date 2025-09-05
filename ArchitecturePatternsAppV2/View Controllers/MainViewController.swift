@@ -11,33 +11,52 @@ import SnapKit
 final class MainViewController: UIViewController {
     
     // MARK: - Properties
-    var tableView = UITableView()
-    var objects = [
+    private var tableView = UITableView()
+    private var objects = [
         Pattern(), Pattern(), Pattern()
     ]
-    var headerTitles = ["ПОРОЖДАЮЩИЕ", "СТРУКТУРНЫЕ", "ПОВЕДЕНЧЕСКИЕ"]
+    private var headerTitles = ["ПОРОЖДАЮЩИЕ", "СТРУКТУРНЫЕ", "ПОВЕДЕНЧЕСКИЕ"]
+    
+    var delegate: MainViewControllerDelegate?
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setUpNavigationBar()
         setupUI()
         createTable()
         setupTable()
         setupConstraints()
     }
     
-#warning("не используй лучше системные иконки.")
-    
-    // MARK: - UI SetUp
+    // MARK: - UI Setup
     private func setupUI() {
-        self.navigationItem.title = "Паттерны проектирования"
         self.view.backgroundColor = UIColor.systemBackground
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "burgerIcon"))
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(systemItem: .add)
     }
     
-    // MARK: - Table SetUp
+    private func setUpNavigationBar() {
+        
+        let customRightButton = UIButton(type: .system)
+        customRightButton.setImage(UIImage(named: "burgerIcon"), for: .normal)
+        customRightButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        customRightButton.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
+        let rightButton = UIBarButtonItem(customView: customRightButton)
+        
+        let customLeftButton = UIButton(type: .system)
+        customLeftButton.setImage(UIImage(named: "addIconC"), for: .normal)
+        customLeftButton.tintColor = .black
+        customLeftButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        customLeftButton.addTarget(self, action: #selector(didTapLeftButton), for: .touchUpInside)
+        let leftButton = UIBarButtonItem(customView: customLeftButton)
+        
+        self.navigationItem.leftBarButtonItem = leftButton
+        self.navigationItem.rightBarButtonItem = rightButton
+        self.navigationItem.title = "Паттерны проектирования"
+        
+    }
+    
+    // MARK: - Table Setup
     private func createTable() {
         tableView.register(PatternTableViewCell.self, forCellReuseIdentifier: PatternTableViewCell.identifier)
         tableView.register(HeaderView.self, forHeaderFooterViewReuseIdentifier: HeaderView.identifier)
@@ -52,11 +71,28 @@ final class MainViewController: UIViewController {
         view.addSubview(tableView)
     }
     
-    // MARK: - Constraints SetUp
+    // MARK: - Constraints Setup
     private func setupConstraints() {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+    
+    // MARK: - Private methods
+    @objc private func didTapRightButton() {
+        var rotationTransform = CGAffineTransform(rotationAngle: .pi / 2)
+        if delegate?.toggleSideMenu() == true {
+            rotationTransform = CGAffineTransform(rotationAngle: -.pi / 2)
+        }
+        guard let customView = navigationItem.rightBarButtonItem?.customView else { return }
+        UIView.animate(withDuration: 0.3) {
+            let currentTransform = customView.transform
+            customView.transform = currentTransform.concatenating(rotationTransform)
+        }
+    }
+    
+    @objc private func didTapLeftButton() {
+        
     }
 }
 
@@ -91,5 +127,9 @@ extension MainViewController: UITableViewDelegate {
         
         return header
     }
-    
 }
+// MARK: - MainViewControllerDelegate
+protocol MainViewControllerDelegate {
+    func toggleSideMenu() -> Bool
+}
+
