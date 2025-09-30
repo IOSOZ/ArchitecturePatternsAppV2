@@ -1,14 +1,14 @@
 //
-//  MainViewController.swift
-//  ArchitecturePatternsApp
+//  FavoriteViewController.swift
+//  ArchitecturePatternsAppV2
 //
-//  Created by Олег Зуев on 25.08.2025.
+//  Created by Олег Зуев on 30.09.2025.
 //
 
 import UIKit
-import SnapKit
 
-final class MainViewController: UIViewController {
+class FavoriteViewController: UIViewController {
+    
     
     // MARK: - Properties
     private var tableView = UITableView()
@@ -29,7 +29,6 @@ final class MainViewController: UIViewController {
     
     // MARK: - View Setup
     private func setupView() {
-        setUpNavigationBar()
         setupUI()
         createTable()
         addViews()
@@ -41,27 +40,6 @@ final class MainViewController: UIViewController {
         self.view.backgroundColor = UIColor.systemBackground
     }
     
-    // MARK: - NavBar Setup
-    private func setUpNavigationBar() {
-        
-        let customRightButton = UIButton(type: .system)
-        customRightButton.setImage(UIImage(resource: .burgerIcon), for: .normal)
-        customRightButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        customRightButton.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
-        let rightButton = UIBarButtonItem(customView: customRightButton)
-        
-        let customLeftButton = UIButton(type: .system)
-        customLeftButton.setImage(UIImage(resource: .addIconC), for: .normal)
-        customLeftButton.tintColor = .black
-        customLeftButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        customLeftButton.addTarget(self, action: #selector(didTapLeftButton), for: .touchUpInside)
-        let leftButton = UIBarButtonItem(customView: customLeftButton)
-        
-        self.navigationItem.leftBarButtonItem = leftButton
-        self.navigationItem.rightBarButtonItem = rightButton
-        self.navigationItem.title = "Паттерны проектирования"
-        
-    }
     
     // MARK: - Table Setup
     private func createTable() {
@@ -84,43 +62,18 @@ final class MainViewController: UIViewController {
             make.edges.equalToSuperview()
         }
     }
-    
-    // MARK: - Objc methods
-    @objc private func didTapLeftButton() {
-        // Ведутся технические работы
-    }
-    
-    @objc private func didTapRightButton() {
-        if let isShown = container?.toggleSideMenu() {
-            rotateRightButton(isOpen: isShown)
-        }
-    }
-    
-    func rotateRightButton(isOpen: Bool) {
-        guard let customView = navigationItem.rightBarButtonItem?.customView else { return }
-        
-        let targetAngle: CGFloat = isOpen ? -.pi / 2 : 0
-        
-        UIView.animate(withDuration: 0.3) {
-            customView.transform = CGAffineTransform(rotationAngle: targetAngle)
-        }
-    }
 }
 
 // MARK: - UITableViewDataSource
-extension MainViewController: UITableViewDataSource {
+extension FavoriteViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        storeManager.getAllPatterns()[section].count
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        storeManager.getAllPatterns().count
+        storeManager.getFavoritePatterns().count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PatternTableViewCell.identifier, for: indexPath) as? PatternTableViewCell else { return UITableViewCell() }
         
-        let patternModel = StorageManager().getPatternWith(indexPath: indexPath)
+        let patternModel = storeManager.getFavoritePatterns()[indexPath.row]
         
         var isFirstCell = false
         
@@ -135,12 +88,17 @@ extension MainViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-extension MainViewController: UITableViewDelegate {
+extension FavoriteViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier) as? HeaderView else {return UIView()}
         
-        let headerTitle = storeManager.getAllPatterns()[section][0].type.rawValue
+        var headerTitle: String
         
+        if storeManager.getFavoritePatterns().count != 0 {
+            headerTitle = "ИЗБРАННОЕ"
+        } else {
+            headerTitle = "ПОКА НЕТ ИЗБРАННОГО =("
+        }
         header.configureUI(with: headerTitle)
         
         return header
@@ -153,10 +111,7 @@ extension MainViewController: UITableViewDelegate {
         let detailVC = PatternDetailsViewController()
         detailVC.object = storeManager.getPatternWith(indexPath: indexPath)
         
-        navigationController?.pushViewController(detailVC, animated: true)
+        present(detailVC, animated: true)
         tableView.reloadData()
     }
 }
-
-
-
