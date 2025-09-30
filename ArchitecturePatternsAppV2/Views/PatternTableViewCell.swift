@@ -14,7 +14,7 @@ final class PatternTableViewCell: UITableViewCell {
         String(describing: Self.self)
     }
     
-    // MARK: - Private Properties
+    // MARK: - UI Properties
     private var containerView = UIView()
     private var nameLabel = UILabel()
     private var descriptionLabel = UILabel()
@@ -28,98 +28,39 @@ final class PatternTableViewCell: UITableViewCell {
     private var bottomHorizontalStack = UIStackView()
     private var generalCellStack = UIStackView()
     
+    private var isFirstCell: Bool = false
+    
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        setUpStacks()
+        setupView()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Constraints SetUp
-    func setUpConstaints(with indexPath: IndexPath) {
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        viewCounterLabel.translatesAutoresizingMaskIntoConstraints = false
-        patternImage.translatesAutoresizingMaskIntoConstraints = false
-        favoriteImage.translatesAutoresizingMaskIntoConstraints = false
-        arrowLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameAndDescriptionStack.translatesAutoresizingMaskIntoConstraints = false
-        upperHorizontalStack.translatesAutoresizingMaskIntoConstraints = false
-        bottomHorizontalStack.translatesAutoresizingMaskIntoConstraints = false
-        generalCellStack.translatesAutoresizingMaskIntoConstraints = false
-        
-        
-        patternImage.snp.makeConstraints { make in
-            make.height.equalTo(60)
-            make.width.equalTo(80)
-        }
-        
-        favoriteImage.snp.makeConstraints { make in
-            make.height.equalTo(16)
-            make.width.equalTo(16)
-        }
-        
-        nameAndDescriptionStack.snp.makeConstraints { make in
-            make.bottom.top.equalToSuperview().inset(4)
-        }
-        
-        arrowLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-        }
-        
-        generalCellStack.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(8)
-            make.trailing.equalToSuperview().inset(8)
-            make.top.equalToSuperview().inset(8)
-            make.bottom.equalToSuperview().inset(4)
-        }
-        
-        
-        containerView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(indexPath.row == 0 ? 0 : 16)
-            make.bottom.equalToSuperview()
-            make.leading.equalToSuperview().inset(16)
-            make.trailing.equalToSuperview().inset(16)
-        }
-    }
-    
     // MARK: - Stacks SetUp
     private func setUpStacks() {
         nameAndDescriptionStack.axis = .vertical
-        nameAndDescriptionStack.addArrangedSubview(nameLabel)
-        nameAndDescriptionStack.addArrangedSubview(descriptionLabel)
         nameAndDescriptionStack.alignment = .leading
         nameAndDescriptionStack.spacing = 0
         nameAndDescriptionStack.distribution = .fill
         nameAndDescriptionStack.setContentHuggingPriority(.defaultHigh, for: .vertical)
         
         upperHorizontalStack.axis = .horizontal
-        upperHorizontalStack.addArrangedSubview(patternImage)
-        upperHorizontalStack.addArrangedSubview(nameAndDescriptionStack)
-        upperHorizontalStack.addArrangedSubview(arrowLabel)
         upperHorizontalStack.spacing = 8
         upperHorizontalStack.alignment = .center
         
-        
         bottomHorizontalStack.axis = .horizontal
-        bottomHorizontalStack.addArrangedSubview(viewCounterLabel)
-        bottomHorizontalStack.addArrangedSubview(favoriteImage)
         bottomHorizontalStack.distribution = .fill
         
         generalCellStack.axis = .vertical
-        generalCellStack.addArrangedSubview(upperHorizontalStack)
-        generalCellStack.addArrangedSubview(bottomHorizontalStack)
-        
-        containerView.addSubview(generalCellStack)
-        contentView.addSubview(containerView)
     }
     
     // MARK: - UI SetUP
-    func setupUI(with patternModel: Pattern) {
+    func setupUI(with patternModel: Pattern, isFirstCell: Bool) {
         backgroundColor = .clear
         selectionStyle = .none
         
@@ -168,17 +109,79 @@ final class PatternTableViewCell: UITableViewCell {
         ]
         arrowLabel.attributedText = NSAttributedString(string: "􀆊", attributes: arrowLabelAttibutes)
         
-        patternImage.image = UIImage(named: patternModel.image)
+        patternImage.image = patternModel.image
         favoriteImage.image = {
             patternModel.isFavorite == false ? UIImage(named: "notLike") : UIImage(named: "like")
         }()
+        
+        self.isFirstCell = isFirstCell
+        setNeedsUpdateConstraints()
     }
     
-    // MARK: - Private Methods
-    private func isFirstCellInSection() -> Bool {
-        guard let tableView = self.superview as? UITableView,
-              let indexPath = tableView.indexPath(for: self) else { return false }
-        return indexPath.row == 0
+    // MARK: - Constraints SetUp
+    override func updateConstraints() {
+           super.updateConstraints()
+           
+           patternImage.snp.remakeConstraints { make in
+               make.height.equalTo(60)
+               make.width.equalTo(80)
+           }
+           
+           favoriteImage.snp.remakeConstraints { make in
+               make.height.equalTo(16)
+               make.width.equalTo(16)
+           }
+           
+           nameAndDescriptionStack.snp.remakeConstraints { make in
+               make.bottom.top.equalToSuperview().inset(4)
+           }
+           
+           arrowLabel.snp.remakeConstraints { make in
+               make.centerY.equalToSuperview()
+           }
+           
+           generalCellStack.snp.remakeConstraints { make in
+               make.leading.equalToSuperview().inset(8)
+               make.trailing.equalToSuperview().inset(8)
+               make.top.equalToSuperview().inset(8)
+               make.bottom.equalToSuperview().inset(4)
+           }
+           
+           containerView.snp.remakeConstraints { make in
+               make.top.equalToSuperview().offset(isFirstCell ? 0 : 16)
+               make.bottom.equalToSuperview()
+               make.leading.equalToSuperview().inset(16)
+               make.trailing.equalToSuperview().inset(16)
+           }
+       }
+}
+
+// MARK: - Extension PatternTableViewCell
+private extension PatternTableViewCell {
+    
+    // MARK: - SetUP View
+    func setupView() {
+        addViews()
+        setUpStacks()
+    }
+    
+    // MARK: - Add Views
+    func addViews() {
+        nameAndDescriptionStack.addArrangedSubview(nameLabel)
+        nameAndDescriptionStack.addArrangedSubview(descriptionLabel)
+        
+        upperHorizontalStack.addArrangedSubview(patternImage)
+        upperHorizontalStack.addArrangedSubview(nameAndDescriptionStack)
+        upperHorizontalStack.addArrangedSubview(arrowLabel)
+        
+        bottomHorizontalStack.addArrangedSubview(viewCounterLabel)
+        bottomHorizontalStack.addArrangedSubview(favoriteImage)
+        
+        generalCellStack.addArrangedSubview(upperHorizontalStack)
+        generalCellStack.addArrangedSubview(bottomHorizontalStack)
+        
+        containerView.addSubview(generalCellStack)
+        contentView.addSubview(containerView)
     }
 }
 

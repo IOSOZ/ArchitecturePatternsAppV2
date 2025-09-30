@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6C16D21A2E84002F0089E4CF /* SideMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C16D2192E84002F0089E4CF /* SideMenuButton.swift */; };
+		6C16D21C2E840D380089E4CF /* PatternDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C16D21B2E840D380089E4CF /* PatternDetailsViewController.swift */; };
+		6C16D2302E8BE54E0089E4CF /* FavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C16D22F2E8BE54E0089E4CF /* FavoriteViewController.swift */; };
 		6C9E79932E62517B00EB03D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9E798C2E62517B00EB03D6 /* AppDelegate.swift */; };
 		6C9E79942E62517B00EB03D6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9E79912E62517B00EB03D6 /* SceneDelegate.swift */; };
 		6C9E79952E62517B00EB03D6 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 6C9E798B2E62517B00EB03D6 /* .gitignore */; };
@@ -23,6 +26,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6C16D2192E84002F0089E4CF /* SideMenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuButton.swift; sourceTree = "<group>"; };
+		6C16D21B2E840D380089E4CF /* PatternDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternDetailsViewController.swift; sourceTree = "<group>"; };
+		6C16D22F2E8BE54E0089E4CF /* FavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteViewController.swift; sourceTree = "<group>"; };
 		6C9E791F2E62469A00EB03D6 /* ArchitecturePatternsAppV2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArchitecturePatternsAppV2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C9E798B2E62517B00EB03D6 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		6C9E798C2E62517B00EB03D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -95,6 +101,8 @@
 			isa = PBXGroup;
 			children = (
 				6C9E79B12E62520B00EB03D6 /* MainViewController.swift */,
+				6C16D22F2E8BE54E0089E4CF /* FavoriteViewController.swift */,
+				6C16D21B2E840D380089E4CF /* PatternDetailsViewController.swift */,
 				6CB1DAA22E65D767009CF33B /* SideMenuViewController.swift */,
 				6CB1DABE2E6789B8009CF33B /* ContainerViewController.swift */,
 			);
@@ -105,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				6C9E79B52E62521300EB03D6 /* PatternTableViewCell.swift */,
+				6C16D2192E84002F0089E4CF /* SideMenuButton.swift */,
 				6CB1DAA02E648FE6009CF33B /* HeaderView.swift */,
 			);
 			path = Views;
@@ -206,9 +215,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C16D2302E8BE54E0089E4CF /* FavoriteViewController.swift in Sources */,
+				6C16D21A2E84002F0089E4CF /* SideMenuButton.swift in Sources */,
 				6C9E79B62E62521300EB03D6 /* PatternTableViewCell.swift in Sources */,
 				6CB1DAA12E648FE6009CF33B /* HeaderView.swift in Sources */,
 				6CB1DABF2E6789B8009CF33B /* ContainerViewController.swift in Sources */,
+				6C16D21C2E840D380089E4CF /* PatternDetailsViewController.swift in Sources */,
 				6C9E79B42E62520F00EB03D6 /* PatternModel.swift in Sources */,
 				6C9E79B22E62520B00EB03D6 /* MainViewController.swift in Sources */,
 				6C9E79932E62517B00EB03D6 /* AppDelegate.swift in Sources */,
