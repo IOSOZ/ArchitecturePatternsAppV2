@@ -1,0 +1,141 @@
+From 3a0a46c7f17d65bafad51e2eba9da852d1f63259 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=D0=94=D0=BC=D0=B8=D1=82=D1=80=D0=B8=D0=B8=CC=86=20=D0=9F?=
+ =?UTF-8?q?=D0=BE=D0=BD=D0=BE=D0=BC=D0=B0=D1=80=D0=B5=D0=B2?= <>
+Date: Wed, 1 Oct 2025 11:34:33 +0300
+Subject: [PATCH] iOS review for fix bugs and implement new features
+
+---
+ ArchitecturePatternsAppV2/Models/PatternModel.swift          | 2 +-
+ .../View Controllers/ContainerViewController.swift           | 3 +++
+ .../View Controllers/FavoriteViewController.swift            | 4 ++++
+ .../View Controllers/MainViewController.swift                | 5 ++++-
+ .../View Controllers/PatternDetailsViewController.swift      | 1 +
+ ArchitecturePatternsAppV2/Views/SideMenuButton.swift         | 3 +++
+ 6 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/ArchitecturePatternsAppV2/Models/PatternModel.swift b/ArchitecturePatternsAppV2/Models/PatternModel.swift
+index 632de1f..08245fa 100644
+--- a/ArchitecturePatternsAppV2/Models/PatternModel.swift
++++ b/ArchitecturePatternsAppV2/Models/PatternModel.swift
+@@ -235,7 +235,7 @@ final class StorageManager {
+         case .structural:
+             targetArray = dataStore.structuralPatterns
+         }
+-        
++        #warning("хуевая затея чекать имя - не безопасно! а если вдруг в базе будут айтемы с одним и тем же именем? как тогда? ну просто вдруг?")
+         if let index = targetArray.firstIndex(where: { $0.name == pattern.name}) {
+             targetArray[index] = pattern
+             switch pattern.type {
+diff --git a/ArchitecturePatternsAppV2/View Controllers/ContainerViewController.swift b/ArchitecturePatternsAppV2/View Controllers/ContainerViewController.swift
+index 3d17ca3..dd9427f 100644
+--- a/ArchitecturePatternsAppV2/View Controllers/ContainerViewController.swift	
++++ b/ArchitecturePatternsAppV2/View Controllers/ContainerViewController.swift	
+@@ -42,6 +42,7 @@ final class ContainerViewController: UIViewController {
+ }
+ 
+ // MARK: - ContainerViewController Extension
++#warning(" ну сдела  приватное расширение и не придется ебать голову с приватами")
+ extension ContainerViewController {
+     private func configureMainVC() {
+         mainController.container = self
+@@ -73,6 +74,8 @@ extension ContainerViewController {
+         }
+     }
+     
++#warning("попробуй написать через тернарник и посмотри как будет лучше")
++
+     private func showSideMenu(shouldMove: Bool) {
+         if shouldMove {
+             tapGesture.isEnabled = true
+diff --git a/ArchitecturePatternsAppV2/View Controllers/FavoriteViewController.swift b/ArchitecturePatternsAppV2/View Controllers/FavoriteViewController.swift
+index 8fb4326..660e301 100644
+--- a/ArchitecturePatternsAppV2/View Controllers/FavoriteViewController.swift	
++++ b/ArchitecturePatternsAppV2/View Controllers/FavoriteViewController.swift	
+@@ -22,11 +22,14 @@ class FavoriteViewController: UIViewController {
+         setupView()
+     }
+     
++#warning("почему в апир?")
++
+     override func viewWillAppear(_ animated: Bool) {
+         super.viewWillAppear(animated)
+         tableView.reloadData()
+     }
+     
++#warning("тут почему то не вынес в екстеншн")
+     // MARK: - View Setup
+     private func setupView() {
+         setupUI()
+@@ -75,6 +78,7 @@ extension FavoriteViewController: UITableViewDataSource {
+         
+         let patternModel = storeManager.getFavoritePatterns()[indexPath.row]
+         
++#warning("аналогично - сделай через тернарник, просто глянь как будет")
+         var isFirstCell = false
+         
+         if indexPath.row == 0 {
+diff --git a/ArchitecturePatternsAppV2/View Controllers/MainViewController.swift b/ArchitecturePatternsAppV2/View Controllers/MainViewController.swift
+index 377e093..ee7fd89 100644
+--- a/ArchitecturePatternsAppV2/View Controllers/MainViewController.swift	
++++ b/ArchitecturePatternsAppV2/View Controllers/MainViewController.swift	
+@@ -12,6 +12,7 @@ final class MainViewController: UIViewController {
+     
+     // MARK: - Properties
+     private var tableView = UITableView()
++#warning("че то ты намудрил с StorageManager")
+     private var storeManager = StorageManager()
+     
+     weak var container: ContainerViewController?
+@@ -43,7 +44,8 @@ final class MainViewController: UIViewController {
+     
+     // MARK: - NavBar Setup
+     private func setUpNavigationBar() {
+-        
++#warning("блин ну почти два похожих кода.... такое... принцип DRY")
++
+         let customRightButton = UIButton(type: .system)
+         customRightButton.setImage(UIImage(resource: .burgerIcon), for: .normal)
+         customRightButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+@@ -158,5 +160,6 @@ extension MainViewController: UITableViewDelegate {
+     }
+ }
+ 
++#warning(" убриай в конце пробелы лишние")
+ 
+ 
+diff --git a/ArchitecturePatternsAppV2/View Controllers/PatternDetailsViewController.swift b/ArchitecturePatternsAppV2/View Controllers/PatternDetailsViewController.swift
+index 17249b2..844826e 100644
+--- a/ArchitecturePatternsAppV2/View Controllers/PatternDetailsViewController.swift	
++++ b/ArchitecturePatternsAppV2/View Controllers/PatternDetailsViewController.swift	
+@@ -69,6 +69,7 @@ private extension PatternDetailsViewController {
+     
+     // MARK: - UI Setup
+     func setupUI() {
++        
+         patternImage.image = object?.image
+         patternNameLabel.text = object?.name
+         descriptionLabel.text = object?.description
+diff --git a/ArchitecturePatternsAppV2/Views/SideMenuButton.swift b/ArchitecturePatternsAppV2/Views/SideMenuButton.swift
+index 591ce3e..e75fb13 100644
+--- a/ArchitecturePatternsAppV2/Views/SideMenuButton.swift
++++ b/ArchitecturePatternsAppV2/Views/SideMenuButton.swift
+@@ -16,6 +16,7 @@ final class SideMenuButton: UIButton {
+         super.init(frame: frame)
+     }
+     
++#warning("нарушение принципа DRY - у тебя почти два одинаковых кода")
+     convenience init(title: String) {
+         self.init(frame: .zero)
+         setupButton(title: title)
+@@ -35,6 +36,8 @@ final class SideMenuButton: UIButton {
+ 
+ // MARK: - SideMenuButton Extension
+ private extension SideMenuButton {
++#warning("нарушение принципа DRY - у тебя почти два одинаковых кода - тут тоже! вопрос нахрена - чтобы сделать ArrowIcon? такое")
++
+     func setupButton(title: String) {
+         setImage(UIImage(resource: .arrowIcon), for: .normal)
+         setTitleColor(.white, for: .normal)
+-- 
+2.43.3
+

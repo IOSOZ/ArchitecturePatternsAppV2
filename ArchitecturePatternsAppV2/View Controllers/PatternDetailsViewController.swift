@@ -17,22 +17,13 @@ final class PatternDetailsViewController: UIViewController {
     var favoriteButton = UIButton()
     
     // MARK: - Properties
-    private var storeManager = StorageManager()
+    private var storeManager = StorageManager.shared
     var object: Pattern!
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
-    }
-    
-    // MARK: - View Setup
-    private func setupView() {
-        setupUI()
-        setUpNavigationBar()
-        addViews()
-        setupConstraints()
     }
     
     // MARK: - Objc methods
@@ -48,8 +39,16 @@ final class PatternDetailsViewController: UIViewController {
     }
 }
 
-// MARK: - PatternDetailsViewController Extension
+// MARK: - Private Methods
 private extension PatternDetailsViewController {
+    
+    // MARK: - View Setup
+    private func setupView() {
+        setupUI()
+        setUpNavigationBar()
+        addViews()
+        setupConstraints()
+    }
     
     // MARK: - NavBar Setup
     func setUpNavigationBar() {
@@ -69,6 +68,7 @@ private extension PatternDetailsViewController {
     
     // MARK: - UI Setup
     func setupUI() {
+        
         patternImage.image = object?.image
         patternNameLabel.text = object?.name
         descriptionLabel.text = object?.description
@@ -108,7 +108,7 @@ private extension PatternDetailsViewController {
         }
     }
     
-    // MARK: - Private Methods
+    // MARK: - Update Favorite Button Color
     func updateFavoriteButtonColor() {
         switch object?.isFavorite {
         case true:

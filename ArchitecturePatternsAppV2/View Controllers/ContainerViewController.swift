@@ -26,45 +26,15 @@ final class ContainerViewController: UIViewController {
         setupView()
     }
  
-    // MARK: - View Setup
-    private func setupView() {
-        configureMainVC()
-        configureSideMenuVC()
-        setupGesture()
-    }
-   
     // MARK: - MainViewControllerDelegate
     func toggleSideMenu() -> Bool {
         sideMenuIsShow.toggle()
         showSideMenu(shouldMove: sideMenuIsShow)
         return sideMenuIsShow
     }
-}
-
-// MARK: - ContainerViewController Extension
-extension ContainerViewController {
-    private func configureMainVC() {
-        mainController.container = self
-        let navigationController = UINavigationController(rootViewController: mainController)
-        view.addSubview(navigationController.view)
-        addChild(navigationController)
-    }
     
-    private func configureSideMenuVC() {
-        if sideMenuController == nil {
-            sideMenuController = SideMenuViewController()
-            addChild(sideMenuController)
-            view.insertSubview(sideMenuController.view, at: 1)
-        }
-    }
-    
-    private func setupGesture() {
-        tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOutSideSideMenu))
-        tapGesture.isEnabled = false
-        view.addGestureRecognizer(tapGesture)
-    }
-    
-    @objc private func didTapOutSideSideMenu(_ gesture: UITapGestureRecognizer) {
+    // MARK: - OBJC Methods
+    @objc func didTapOutSideSideMenu(_ gesture: UITapGestureRecognizer) {
         let tapLocation = gesture.location(in: view)
         if sideMenuIsShow && !sideMenuController.view.frame.contains(tapLocation) {
             sideMenuIsShow.toggle()
@@ -72,29 +42,53 @@ extension ContainerViewController {
             mainController.rotateRightButton(isOpen: sideMenuIsShow)
         }
     }
-    
-    private func showSideMenu(shouldMove: Bool) {
-        if shouldMove {
-            tapGesture.isEnabled = true
-            UIView.animate(withDuration: 0.3,
-                           delay: 0,
-                           usingSpringWithDamping: 1,
-                           initialSpringVelocity: 0,
-                           options: .curveEaseInOut) {
-                self.sideMenuController.view.frame.origin.x = 0
-            }
-        } else {
-            tapGesture.isEnabled = false
-            UIView.animate(withDuration: 0.3,
-                           delay: 0,
-                           usingSpringWithDamping: 0.8,
-                           initialSpringVelocity: 0,
-                           options: .curveEaseInOut) {
-                self.sideMenuController.view.frame.origin.x = -self.sideMenuController.view.frame.width
-            }
-        }
-    }
 }
 
-
-
+// MARK: - ContainerViewController Extension
+private extension ContainerViewController {
+    
+    // MARK: - Configure Main VC
+    func configureMainVC() {
+        mainController.container = self
+        let navigationController = UINavigationController(rootViewController: mainController)
+        view.addSubview(navigationController.view)
+        addChild(navigationController)
+    }
+    
+    // MARK: - Configure Side VC
+    func configureSideMenuVC() {
+        if sideMenuController == nil {
+            sideMenuController = SideMenuViewController()
+            addChild(sideMenuController)
+            view.insertSubview(sideMenuController.view, at: 1)
+        }
+    }
+    
+    // MARK: - View Setup
+    private func setupView() {
+        configureMainVC()
+        configureSideMenuVC()
+        setupGesture()
+    }
+    
+    // MARK: - Gesture Setup
+    func setupGesture() {
+        tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOutSideSideMenu))
+        tapGesture.isEnabled = false
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    // MARK: - Side Menu Animate
+    func showSideMenu(shouldMove: Bool) {
+        tapGesture.isEnabled = shouldMove ? true : false
+        
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 0,
+            options: .curveEaseOut) {
+                self.sideMenuController.view.frame.origin.x = shouldMove ? 0 : -self.sideMenuController.view.frame.width
+            }
+    }
+}

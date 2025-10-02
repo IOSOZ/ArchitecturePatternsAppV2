@@ -115,40 +115,47 @@ final class PatternTableViewCell: UITableViewCell {
         }()
         
         self.isFirstCell = isFirstCell
-        setNeedsUpdateConstraints()
+        
+        containerView.snp.remakeConstraints { make in
+            make.top.equalToSuperview().offset(isFirstCell ? 0 : 16)
+            make.bottom.equalToSuperview()
+            make.leading.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
+        }
     }
     
+    
+    
     // MARK: - Constraints SetUp
-    override func updateConstraints() {
-           super.updateConstraints()
+    func setupConstraints() {
            
-           patternImage.snp.remakeConstraints { make in
+           patternImage.snp.makeConstraints { make in
                make.height.equalTo(60)
                make.width.equalTo(80)
            }
            
-           favoriteImage.snp.remakeConstraints { make in
+           favoriteImage.snp.makeConstraints { make in
                make.height.equalTo(16)
                make.width.equalTo(16)
            }
            
-           nameAndDescriptionStack.snp.remakeConstraints { make in
+           nameAndDescriptionStack.snp.makeConstraints { make in
                make.bottom.top.equalToSuperview().inset(4)
            }
            
-           arrowLabel.snp.remakeConstraints { make in
+           arrowLabel.snp.makeConstraints { make in
                make.centerY.equalToSuperview()
            }
            
-           generalCellStack.snp.remakeConstraints { make in
+           generalCellStack.snp.makeConstraints { make in
                make.leading.equalToSuperview().inset(8)
                make.trailing.equalToSuperview().inset(8)
                make.top.equalToSuperview().inset(8)
                make.bottom.equalToSuperview().inset(4)
            }
            
-           containerView.snp.remakeConstraints { make in
-               make.top.equalToSuperview().offset(isFirstCell ? 0 : 16)
+           containerView.snp.makeConstraints { make in
+               make.top.equalToSuperview().offset(16)
                make.bottom.equalToSuperview()
                make.leading.equalToSuperview().inset(16)
                make.trailing.equalToSuperview().inset(16)
@@ -163,6 +170,7 @@ private extension PatternTableViewCell {
     func setupView() {
         addViews()
         setUpStacks()
+        setupConstraints()
     }
     
     // MARK: - Add Views

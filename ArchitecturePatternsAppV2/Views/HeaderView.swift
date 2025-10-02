@@ -42,8 +42,9 @@ private extension HeaderView {
     // MARK: - View SetUp
     func setupView() {
         addViews()
-        setupConstraints()
         setupUI()
+        setupConstraints()
+        
     }
 
     // MARK: - Add Views
@@ -55,14 +56,14 @@ private extension HeaderView {
     // MARK: - Constraints SetUp
     func setupConstraints() {
 
+        containerView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16))
+        }
+        
         headerLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(24)
-            make.top.bottom.equalToSuperview().inset(16)
-        }
-
-        containerView.snp.makeConstraints { make in
-            make.bottom.top.equalToSuperview()
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().inset(16)
         }
     }
     

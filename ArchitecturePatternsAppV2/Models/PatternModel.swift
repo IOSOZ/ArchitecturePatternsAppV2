@@ -15,6 +15,7 @@ enum PatternType: String {
 }
 
 struct Pattern {
+    let id = UUID()
     let type: PatternType
     let name: String
     let description: String
@@ -204,7 +205,7 @@ final class DataStore {
 
 final class StorageManager {
     private let dataStore = DataStore.shared
-    
+    static let shared = StorageManager()
     func getAllPatterns() -> [[Pattern]] {
         return [dataStore.creationalPatterns, dataStore.structuralPatterns, dataStore.behavioralPatterns]
     }
@@ -224,6 +225,17 @@ final class StorageManager {
         return favoritePattens
     }
     
+    func addNewPattern(_ pattern: Pattern) {
+        switch pattern.type {
+        case .behavioral:
+            dataStore.behavioralPatterns.append(pattern)
+        case .structural:
+            dataStore.structuralPatterns.append(pattern)
+        case .creational:
+            dataStore.structuralPatterns.append(pattern)
+        }
+    }
+    
     func updatePattern(_ pattern: Pattern) {
         var targetArray: [Pattern]
         
@@ -236,7 +248,7 @@ final class StorageManager {
             targetArray = dataStore.structuralPatterns
         }
         
-        if let index = targetArray.firstIndex(where: { $0.name == pattern.name}) {
+        if let index = targetArray.firstIndex(where: { $0.id == pattern.id}) {
             targetArray[index] = pattern
             switch pattern.type {
             case .behavioral:
@@ -254,6 +266,8 @@ final class StorageManager {
         incrementPattern.viewCounter += 1
         updatePattern(incrementPattern)
     }
+    
+    private init() {}
     
 //    private func getPatternByName(_ name: String) -> Pattern? {
 //        let allPattens = getAllPatterns().flatMap { $0 }

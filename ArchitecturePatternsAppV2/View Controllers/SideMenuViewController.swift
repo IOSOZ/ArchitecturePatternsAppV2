@@ -11,11 +11,11 @@ import UIKit
 final class SideMenuViewController: UIViewController {
 
     // MARK: - UI Properties
-    private var OOPButton = UIButton()
-    private var designPatternsButton = UIButton()
-    private var architecturalPatternsButton = UIButton()
-    private var SOLIDButton = UIButton()
-    private var favoriteButton = UIButton()
+    private var OOPButton = UIControl()
+    private var designPatternsButton = UIControl()
+    private var architecturalPatternsButton = UIControl()
+    private var SOLIDButton = UIControl()
+    private var favoriteButton = UIControl()
 
     private var buttonVerticalStack = UIStackView()
 
@@ -24,17 +24,23 @@ final class SideMenuViewController: UIViewController {
         super.viewDidLoad()
         setupView()
     }
+    
+    // MARK: - Objc methods
+    @objc func didTapFavoriteButton() {
+        let favoriteVC = FavoriteViewController()
+        present(favoriteVC, animated: true)
+    }
 }
 
 // MARK: - SideMenuViewController Extension
-extension SideMenuViewController {
+private extension SideMenuViewController {
     // MARK: - View Setup
     func setupView() {
         setupUI()
         addViews()
         setupStack()
         setupConstraints()
-    }
+    } 
     
     // MARK: - UI Setup
     func setupUI() {
@@ -45,12 +51,11 @@ extension SideMenuViewController {
         
         view.backgroundColor = UIColor(named: "sideMenuColor")
         
-        OOPButton = SideMenuButton(title: "Приниципы ООП")
-        designPatternsButton = SideMenuButton(title: "Паттерны проектирования")
-        architecturalPatternsButton = SideMenuButton(title: "Архитектурные паттерны")
-        SOLIDButton = SideMenuButton(title: "Принципы SOLID")
-        favoriteButton = SideMenuButton(title: "Избранное", image: UIImage(resource: .like))
-        
+        OOPButton = SideMenuButton(title: "Приниципы ООП", image: .arrowIcon)
+        designPatternsButton = SideMenuButton(title: "Паттерны проектирования", image: .arrowIcon)
+        architecturalPatternsButton = SideMenuButton(title: "Архитектурные паттерны", image: .arrowIcon)
+        SOLIDButton = SideMenuButton(title: "Принципы SOLID", image: .arrowIcon)
+        favoriteButton = SideMenuButton(title: "Избранное", image: .heart)
         
         favoriteButton.addTarget(self, action: #selector(didTapFavoriteButton), for: .touchUpInside)
     }
@@ -68,14 +73,14 @@ extension SideMenuViewController {
     // MARK: - Stack Setup
     func setupStack() {
         buttonVerticalStack.axis = .vertical
-        buttonVerticalStack.spacing = 32
+        buttonVerticalStack.spacing = 60
         buttonVerticalStack.alignment = .leading
     }
     
     // MARK: - Constraints Setup
     func setupConstraints() {
         buttonVerticalStack.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(16)
             make.centerY.equalTo(view.snp.centerY)
         }
         
@@ -84,13 +89,4 @@ extension SideMenuViewController {
             make.bottom.equalToSuperview().inset(100)
         }
     }
-    
-    // MARK: - Objc methods
-    @objc func didTapFavoriteButton() {
-        let favoriteVC = FavoriteViewController()
-        present(favoriteVC, animated: true)
-    }
-    
-    
-    
 }
