@@ -12,107 +12,63 @@ final class MainViewController: UIViewController {
     
     // MARK: - Properties
     private var tableView = UITableView()
-    private var objects = [
-        Pattern(), Pattern(), Pattern()
-    ]
-    private var headerTitles = ["ПОРОЖДАЮЩИЕ", "СТРУКТУРНЫЕ", "ПОВЕДЕНЧЕСКИЕ"]
     
-    var delegate: MainViewControllerDelegate?
+    private var storageManager = StorageManager.shared
+    
+    weak var container: ContainerViewController?
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setUpNavigationBar()
-        setupUI()
-        createTable()
-        setupTable()
-        setupConstraints()
+        setupView()
     }
     
-    // MARK: - UI Setup
-    private func setupUI() {
-        self.view.backgroundColor = UIColor.systemBackground
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
     }
     
-    private func setUpNavigationBar() {
-        
-        let customRightButton = UIButton(type: .system)
-        customRightButton.setImage(UIImage(named: "burgerIcon"), for: .normal)
-        customRightButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        customRightButton.addTarget(self, action: #selector(didTapRightButton), for: .touchUpInside)
-        let rightButton = UIBarButtonItem(customView: customRightButton)
-        
-        let customLeftButton = UIButton(type: .system)
-        customLeftButton.setImage(UIImage(named: "addIconC"), for: .normal)
-        customLeftButton.tintColor = .black
-        customLeftButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        customLeftButton.addTarget(self, action: #selector(didTapLeftButton), for: .touchUpInside)
-        let leftButton = UIBarButtonItem(customView: customLeftButton)
-        
-        self.navigationItem.leftBarButtonItem = leftButton
-        self.navigationItem.rightBarButtonItem = rightButton
-        self.navigationItem.title = "Паттерны проектирования"
-        
-    }
-    
-    // MARK: - Table Setup
-    private func createTable() {
-        tableView.register(PatternTableViewCell.self, forCellReuseIdentifier: PatternTableViewCell.identifier)
-        tableView.register(HeaderView.self, forHeaderFooterViewReuseIdentifier: HeaderView.identifier)
-        tableView.delegate = self
-        tableView.dataSource = self
-    }
-    
-    private func setupTable() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.separatorStyle = .none
-        tableView.sectionHeaderTopPadding = 0
-        view.addSubview(tableView)
-    }
-    
-    // MARK: - Constraints Setup
-    private func setupConstraints() {
-        tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-    }
-    
-    // MARK: - Private methods
-    @objc private func didTapRightButton() {
-        var rotationTransform = CGAffineTransform(rotationAngle: .pi / 2)
-        if delegate?.toggleSideMenu() == true {
-            rotationTransform = CGAffineTransform(rotationAngle: -.pi / 2)
-        }
-        guard let customView = navigationItem.rightBarButtonItem?.customView else { return }
-        UIView.animate(withDuration: 0.3) {
-            let currentTransform = customView.transform
-            customView.transform = currentTransform.concatenating(rotationTransform)
-        }
-    }
-    
+    // MARK: - Objc methods
     @objc private func didTapLeftButton() {
+        // Ведутся технические работы
+    }
+    
+    @objc private func didTapRightButton() {
+        if let isShown = container?.toggleSideMenu() {
+            rotateRightButton(isOpen: isShown)
+        }
+    }
+    
+    // MARK: - Public Methods
+    func rotateRightButton(isOpen: Bool) {
+        guard let customView = navigationItem.rightBarButtonItem?.customView else { return }
         
+        let targetAngle: CGFloat = isOpen ? -.pi / 2 : 0
+        
+        UIView.animate(withDuration: 0.3) {
+            customView.transform = CGAffineTransform(rotationAngle: targetAngle)
+        }
     }
 }
 
 // MARK: - UITableViewDataSource
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        objects.count
+        storageManager.getAllPatterns()[section].count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        headerTitles.count
+        storageManager.getAllPatterns().count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PatternTableViewCell.identifier, for: indexPath) as? PatternTableViewCell else { return UITableViewCell() }
         
-        let patternModel = objects[indexPath.row]
+        let patternModel = storageManager.getPatternWith(indexPath: indexPath)
         
-        cell.setupUI(with: patternModel)
-        cell.setUpConstaints(with: indexPath)
+        let isFirstCell = indexPath.row == 0 ? true : false
+        
+        cell.setupUI(with: patternModel, isFirstCell: isFirstCell)
         
         return cell
     }
@@ -123,13 +79,92 @@ extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier) as? HeaderView else {return UIView()}
         
-        header.setupUI(with: headerTitles[section])
+        let headerTitle = storageManager.getAllPatterns()[section][0].type.rawValue
+        
+        header.configureUI(with: headerTitle)
         
         return header
     }
-}
-// MARK: - MainViewControllerDelegate
-protocol MainViewControllerDelegate {
-    func toggleSideMenu() -> Bool
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return UITableView.automaticDimension
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let pattern = storageManager.getPatternWith(indexPath: indexPath)
+        storageManager.incrementViewCounterFor(pattern: pattern)
+        
+        let detailVC = PatternDetailsViewController()
+        detailVC.object = storageManager.getPatternWith(indexPath: indexPath)
+        
+        navigationController?.pushViewController(detailVC, animated: true)
+        tableView.reloadData()
+    }
 }
 
+// MARK: - Private Methods
+
+private extension MainViewController {
+    
+    // MARK: - View Setup
+    func setupView() {
+        setUpNavigationBar()
+        setupUI()
+        createTable()
+        addViews()
+        setupConstraints()
+    }
+    
+    // MARK: - UI Setup
+    func setupUI() {
+        self.view.backgroundColor = UIColor.systemBackground
+    }
+    
+    // MARK: - NavBar Setup
+    func setUpNavigationBar() {
+        self.navigationItem.leftBarButtonItem = createCustomBarButton(
+            with: .addIconC,
+            action: #selector(didTapLeftButton),
+            tintColor: .black
+        )
+        self.navigationItem.rightBarButtonItem = createCustomBarButton(
+            with: .burgerIcon,
+            action:  #selector(didTapRightButton)
+        )
+        self.navigationItem.title = "Паттерны проектирования"
+        
+    }
+    
+    // MARK: - Create Bar Button
+    func createCustomBarButton(with image: UIImage, action: Selector, tintColor: UIColor? = nil) -> UIBarButtonItem {
+        let customButton = UIButton(type: .system)
+        customButton.setImage(image, for: .normal)
+        customButton.tintColor = tintColor
+        customButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        customButton.addTarget(self, action: action, for: .touchUpInside)
+        return UIBarButtonItem(customView: customButton)
+        
+    }
+
+    // MARK: - Table Setup
+    private func createTable() {
+        tableView.register(PatternTableViewCell.self, forCellReuseIdentifier: PatternTableViewCell.identifier)
+        tableView.register(HeaderView.self, forHeaderFooterViewReuseIdentifier: HeaderView.identifier)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.separatorStyle = .none
+        tableView.sectionHeaderTopPadding = 0
+    }
+    
+    // MARK: - Add Views
+    private func addViews() {
+        view.addSubview(tableView)
+    }
+    
+    // MARK: - Constraints Setup
+    private func setupConstraints() {
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+}
