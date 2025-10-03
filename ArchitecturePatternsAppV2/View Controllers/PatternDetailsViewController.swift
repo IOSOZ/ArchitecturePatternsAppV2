@@ -29,10 +29,9 @@ final class PatternDetailsViewController: UIViewController {
     // MARK: - Objc methods
     @objc func didTapFavoriteButton() {
         object?.isFavorite.toggle()
-        print(object?.isFavorite as Any)
         if let favoriteButton = navigationItem.rightBarButtonItem?.customView as? UIButton {
             UIView.animate(withDuration: 0.3) {
-                self.updateFavoriteButtonColor()
+                self.updateFavoriteState()
                 favoriteButton.layoutIfNeeded()
             }
         }
@@ -56,7 +55,7 @@ private extension PatternDetailsViewController {
         favoriteButton = UIButton(type: .system)
         favoriteButton.setImage(UIImage(resource: .like), for: .normal)
         
-        updateFavoriteButtonColor()
+        updateFavoriteState()
         favoriteButton.addTarget(self, action: #selector(didTapFavoriteButton), for: .touchUpInside)
         favoriteButton.snp.makeConstraints { make in
             make.size.equalTo(24)
@@ -108,8 +107,8 @@ private extension PatternDetailsViewController {
         }
     }
     
-    // MARK: - Update Favorite Button Color
-    func updateFavoriteButtonColor() {
+    // MARK: - Update Favorite State
+    func updateFavoriteState() {
         switch object?.isFavorite {
         case true:
             favoriteButton.tintColor = .red
