@@ -8,29 +8,27 @@
 import UIKit
 import SnapKit
 
+// MARK: - ContainerManager Protocol
+protocol ContainerManger: AnyObject {
+    func changeCurrentVC(to newController: BaseContentViewController)
+    func toggleSideMenu() -> Bool
+}
 
 final class ContainerViewController: UIViewController {
     
     // MARK: - Properties
     
-    private var mainController = MainViewController()
-    private var sideMenuController: UIViewController!
+    private var currentController: BaseContentViewController!
+    private var sideMenuController: SideMenuViewController!
+    private var navController: UINavigationController!
     
     private var tapGesture: UITapGestureRecognizer!
     private var sideMenuIsShow = false
-
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-    }
- 
-    // MARK: - MainViewControllerDelegate
-    func toggleSideMenu() -> Bool {
-        sideMenuIsShow.toggle()
-        showSideMenu(shouldMove: sideMenuIsShow)
-        return sideMenuIsShow
     }
     
     // MARK: - OBJC Methods
@@ -39,7 +37,10 @@ final class ContainerViewController: UIViewController {
         if sideMenuIsShow && !sideMenuController.view.frame.contains(tapLocation) {
             sideMenuIsShow.toggle()
             showSideMenu(shouldMove: sideMenuIsShow)
-            mainController.rotateRightButton(isOpen: sideMenuIsShow)
+            
+            if let currentVC = currentController {
+                currentVC.rotateRightButton(isOpen: sideMenuIsShow)
+            }
         }
     }
 }
@@ -47,29 +48,44 @@ final class ContainerViewController: UIViewController {
 // MARK: - ContainerViewController Extension
 private extension ContainerViewController {
     
-    // MARK: - Configure Main VC
-    func configureMainVC() {
-        mainController.container = self
-        let navigationController = UINavigationController(rootViewController: mainController)
-        view.addSubview(navigationController.view)
-        addChild(navigationController)
-    }
-    
-    // MARK: - Configure Side VC
-    func configureSideMenuVC() {
-        if sideMenuController == nil {
-            sideMenuController = SideMenuViewController()
-            addChild(sideMenuController)
-            view.insertSubview(sideMenuController.view, at: 1)
-        }
-    }
-    
     // MARK: - View Setup
     private func setupView() {
         configureMainVC()
         configureSideMenuVC()
         setupGesture()
     }
+    
+    // MARK: - Configure Main VC
+    func configureMainVC() {
+        let mainVC = DesignPatternsViewController()
+        mainVC.container = self
+        currentController = mainVC
+        
+        navController = UINavigationController(rootViewController: currentController)
+        
+        configureNavigationController()
+    }
+   
+    // MARK: - Configure Navigation Controller
+    func configureNavigationController() {
+        addChild(navController)
+        view.addSubview(navController.view)
+        navController.didMove(toParent: self)
+        
+        navController.navigationBar.tintColor = .black
+    }
+    
+    // MARK: - Configure Side VC
+    func configureSideMenuVC() {
+        if sideMenuController == nil {
+            sideMenuController = SideMenuViewController()
+            sideMenuController.containerManager = self
+            addChild(sideMenuController)
+            view.insertSubview(sideMenuController.view, at: 1)
+            sideMenuController.didMove(toParent: self)
+        }
+    }
+    
     
     // MARK: - Gesture Setup
     func setupGesture() {
@@ -90,5 +106,66 @@ private extension ContainerViewController {
             options: .curveEaseOut) {
                 self.sideMenuController.view.frame.origin.x = shouldMove ? 0 : -self.sideMenuController.view.frame.width
             }
+    }
+    
+    // MARK: - Controller Creation
+    func createController(for item: MenuItem) -> BaseContentViewController {
+        let controller: BaseContentViewController
+        switch item {
+        case .oop:
+            controller = OOPViewController()
+        case .designPatterns:
+            controller = ArchitecturalPatternsViewController()
+        case .architecturalPatterns:
+            controller = DesignPatternsViewController()
+        case .solid:
+            controller = SOLIDViewController()
+        case .favorite:
+            controller = FavoriteViewController()
+        }
+        
+        controller.container = self
+        
+        return controller
+    }
+    
+    func performControllerChange(to menuItem: MenuItem) {
+        let newController = createController(for: menuItem)
+        
+        navController.setViewControllers([newController], animated: false)
+        currentController = newController
+        
+        sideMenuIsShow = false
+        showSideMenu(shouldMove: false)
+        
+        if let mainVC = newController as? DesignPatternsViewController {
+            mainVC.rotateRightButton(isOpen: false)
+        }
+    }
+}
+
+extension ContainerViewController: ContainerManger {
+    func changeCurrentVC(to newController: BaseContentViewController) {
+        let menuItem: MenuItem
+        switch newController {
+        case is OOPViewController:
+            menuItem = .oop
+        case is ArchitecturalPatternsViewController:
+            menuItem = .architecturalPatterns
+        case is SOLIDViewController:
+            menuItem = .solid
+        case is FavoriteViewController:
+            menuItem = .favorite
+        default:
+            menuItem = .designPatterns
+        }
+        
+        performControllerChange(to: menuItem)
+    }
+    
+    func toggleSideMenu() -> Bool {
+        sideMenuIsShow.toggle()
+        showSideMenu(shouldMove: sideMenuIsShow)
+        return sideMenuIsShow
     }
 }
