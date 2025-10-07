@@ -129,6 +129,7 @@ private extension ContainerViewController {
         return controller
     }
     
+    // MARK: - Perform Controller Change
     func performControllerChange(to menuItem: MenuItem) {
         let newController = createController(for: menuItem)
         
@@ -144,7 +145,10 @@ private extension ContainerViewController {
     }
 }
 
+// MARK: - ContainerManger
 extension ContainerViewController: ContainerManger {
+
+    // MARK: - Change Current View Controller
     func changeCurrentVC(to newController: BaseContentViewController) {
         let menuItem: MenuItem
         switch newController {
@@ -163,6 +167,7 @@ extension ContainerViewController: ContainerManger {
         performControllerChange(to: menuItem)
     }
     
+    // MARK: - Toggle Side Menu
     func toggleSideMenu() -> Bool {
         sideMenuIsShow.toggle()
         showSideMenu(shouldMove: sideMenuIsShow)

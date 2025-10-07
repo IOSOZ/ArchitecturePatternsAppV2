@@ -19,7 +19,7 @@ class BaseContentViewController: UIViewController {
     }
     
     deinit {
-        print("\(self) выгрузился")
+        print("\(self.description) выгрузился")
     }
     
     // MARK: - Public Methods
@@ -35,7 +35,7 @@ class BaseContentViewController: UIViewController {
     
     // MARK: - Objc methods
     @objc private func didTapLeftButton() {
-        // Ведутся технические работы
+        // Реализую в след раз, не успеваю( 
     }
     
     @objc private func didTapRightButton() {

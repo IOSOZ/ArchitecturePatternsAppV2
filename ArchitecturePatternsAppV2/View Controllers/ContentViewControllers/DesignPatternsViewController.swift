@@ -63,7 +63,7 @@ extension DesignPatternsViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return UITableView.automaticDimension
+        return 45
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-enum PatternType: String {
+enum PatternType: String, CaseIterable {
     case creational = "ПОРОЖДАЮЩИЕ"
     case structural = "СТРУКТУРНЫЕ"
     case behavioral = "ПОВЕДЕНЧЕСКИЕ"
@@ -16,10 +16,10 @@ enum PatternType: String {
 
 struct Pattern {
     let id = UUID()
-    let type: PatternType
-    let name: String
-    let description: String
-    let image: UIImage
+    var type: PatternType
+    var name: String
+    var description: String
+    var image: UIImage
     var viewCounter: Int = 0
     var isFavorite: Bool = false
 }
@@ -232,39 +232,59 @@ final class StorageManager {
         case .structural:
             dataStore.structuralPatterns.append(pattern)
         case .creational:
-            dataStore.structuralPatterns.append(pattern)
+            dataStore.creationalPatterns.append(pattern)
         }
     }
     
     func updatePattern(_ pattern: Pattern) {
-        var targetArray: [Pattern]
+        guard let oldPattern = getPatternByID(pattern.id) else { return }
+            
+        if oldPattern.type != pattern.type {
+            removePattern(oldPattern)
+            addNewPattern(pattern)
+            return
+        }
         
         switch pattern.type {
         case .behavioral:
-            targetArray = dataStore.behavioralPatterns
+            if let index = dataStore.behavioralPatterns.firstIndex(where: { $0.id == pattern.id }) {
+                dataStore.behavioralPatterns[index] = pattern
+            }
         case .creational:
-            targetArray = dataStore.creationalPatterns
+            if let index = dataStore.creationalPatterns.firstIndex(where: { $0.id == pattern.id }) {
+                dataStore.creationalPatterns[index] = pattern
+            }
         case .structural:
-            targetArray = dataStore.structuralPatterns
-        }
-        
-        if let index = targetArray.firstIndex(where: { $0.id == pattern.id}) {
-            targetArray[index] = pattern
-            switch pattern.type {
-            case .behavioral:
-                dataStore.behavioralPatterns = targetArray
-            case .creational:
-                dataStore.creationalPatterns = targetArray
-            case .structural:
-                dataStore.structuralPatterns = targetArray
+            if let index = dataStore.structuralPatterns.firstIndex(where: { $0.id == pattern.id }) {
+                dataStore.structuralPatterns[index] = pattern
             }
         }
+        
     }
     
     func incrementViewCounterFor(pattern : Pattern) {
         var incrementPattern = pattern
         incrementPattern.viewCounter += 1
         updatePattern(incrementPattern)
+    }
+    
+    func getPatternByID(_ id: UUID) -> Pattern? {
+            let allPattens = getAllPatterns().flatMap { $0 }
+            return allPattens.first { $0.id == id }
+        }
+    
+    func removePattern(_ pattern: Pattern ) {
+        switch pattern.type {
+        case .behavioral:
+            guard let index = dataStore.behavioralPatterns.firstIndex(where: { $0.id == pattern.id}) else {return}
+            dataStore.behavioralPatterns.remove(at: index)
+        case .structural:
+            guard let index = dataStore.structuralPatterns.firstIndex(where: { $0.id == pattern.id}) else {return}
+            dataStore.structuralPatterns.remove(at: index)
+        case .creational:
+            guard let index = dataStore.creationalPatterns.firstIndex(where: { $0.id == pattern.id}) else {return}
+            dataStore.creationalPatterns.remove(at: index)
+        }
     }
     
     private init() {}

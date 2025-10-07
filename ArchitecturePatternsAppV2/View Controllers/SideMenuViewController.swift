@@ -94,6 +94,7 @@ private extension SideMenuViewController {
         favoriteButton.addTarget(self, action: #selector(didTapFavoriteButton), for: .touchUpInside)
     }
     
+    // MARK: - Add View
     func addViews() {
         buttonVerticalStack.addArrangedSubview(OOPButton)
         buttonVerticalStack.addArrangedSubview(designPatternsButton)
