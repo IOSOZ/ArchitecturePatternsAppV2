@@ -1,39 +1,47 @@
 //
-//  FavoriteViewController.swift
-//  ArchitecturePatternsAppV2
+//  MainViewController.swift
+//  ArchitecturePatternsApp
 //
-//  Created by Олег Зуев on 30.09.2025.
+//  Created by Олег Зуев on 25.08.2025.
 //
 
 import UIKit
+import SnapKit
 
-class FavoriteViewController: UIViewController {
-    
+final class DesignPatternsViewController: BaseContentViewController {
     
     // MARK: - Properties
     private var tableView = UITableView()
-    private var storageManager = StorageManager.shared
     
-    weak var container: ContainerViewController?
+    private var storageManager = StorageManager.shared
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
 }
 
 // MARK: - UITableViewDataSource
-extension FavoriteViewController: UITableViewDataSource {
+extension DesignPatternsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        storageManager.getFavoritePatterns().count
+        storageManager.getAllPatterns()[section].count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        storageManager.getAllPatterns().count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PatternTableViewCell.identifier, for: indexPath) as? PatternTableViewCell else { return UITableViewCell() }
         
-        let patternModel = storageManager.getFavoritePatterns()[indexPath.row]
-    
+        let patternModel = storageManager.getPatternWith(indexPath: indexPath)
+        
         let isFirstCell = indexPath.row == 0 ? true : false
         
         cell.configure(with: patternModel, isFirstCell: isFirstCell)
@@ -43,20 +51,19 @@ extension FavoriteViewController: UITableViewDataSource {
 }
 
 // MARK: - UITableViewDelegate
-extension FavoriteViewController: UITableViewDelegate {
+extension DesignPatternsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier) as? HeaderView else {return UIView()}
         
-        var headerTitle: String
-//        Тут убрать грязь с if
-        if storageManager.getFavoritePatterns().count != 0 {
-            headerTitle = "ИЗБРАННОЕ"
-        } else {
-            headerTitle = "ПОКА НЕТ ИЗБРАННОГО =("
-        }
+        let headerTitle = storageManager.getAllPatterns()[section][0].type.rawValue
+        
         header.configureUI(with: headerTitle)
         
         return header
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 45
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -66,14 +73,13 @@ extension FavoriteViewController: UITableViewDelegate {
         let detailVC = PatternDetailsViewController()
         detailVC.object = storageManager.getPatternWith(indexPath: indexPath)
         
-        present(detailVC, animated: true)
+        navigationController?.pushViewController(detailVC, animated: true)
         tableView.reloadData()
     }
 }
 
 // MARK: - Private Methods
-private extension FavoriteViewController {
-    
+private extension DesignPatternsViewController {
     // MARK: - View Setup
     func setupView() {
         setupUI()
@@ -86,9 +92,9 @@ private extension FavoriteViewController {
     func setupUI() {
         self.view.backgroundColor = UIColor.systemBackground
     }
-    
+
     // MARK: - Table Setup
-    func createTable() {
+    private func createTable() {
         tableView.register(PatternTableViewCell.self, forCellReuseIdentifier: PatternTableViewCell.identifier)
         tableView.register(HeaderView.self, forHeaderFooterViewReuseIdentifier: HeaderView.identifier)
         tableView.delegate = self
@@ -98,14 +104,15 @@ private extension FavoriteViewController {
     }
     
     // MARK: - Add Views
-    func addViews() {
+    private func addViews() {
         view.addSubview(tableView)
     }
     
     // MARK: - Constraints Setup
-    func setupConstraints() {
+    private func setupConstraints() {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
 }
+

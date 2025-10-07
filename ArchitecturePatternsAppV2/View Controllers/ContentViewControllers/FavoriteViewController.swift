@@ -2,19 +2,17 @@
 //  FavoriteViewController.swift
 //  ArchitecturePatternsAppV2
 //
-//  Created by Олег Зуев on 30.09.2025.
+//  Created by Олег Зуев on 04.10.2025.
 //
 
 import UIKit
 
-class FavoriteViewController: UIViewController {
-    
+class FavoriteViewController: BaseContentViewController {
     
     // MARK: - Properties
     private var tableView = UITableView()
     private var storageManager = StorageManager.shared
     
-    weak var container: ContainerViewController?
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
@@ -33,7 +31,7 @@ extension FavoriteViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PatternTableViewCell.identifier, for: indexPath) as? PatternTableViewCell else { return UITableViewCell() }
         
         let patternModel = storageManager.getFavoritePatterns()[indexPath.row]
-    
+        
         let isFirstCell = indexPath.row == 0 ? true : false
         
         cell.configure(with: patternModel, isFirstCell: isFirstCell)
@@ -44,20 +42,6 @@ extension FavoriteViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 extension FavoriteViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier) as? HeaderView else {return UIView()}
-        
-        var headerTitle: String
-//        Тут убрать грязь с if
-        if storageManager.getFavoritePatterns().count != 0 {
-            headerTitle = "ИЗБРАННОЕ"
-        } else {
-            headerTitle = "ПОКА НЕТ ИЗБРАННОГО =("
-        }
-        header.configureUI(with: headerTitle)
-        
-        return header
-    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let pattern = storageManager.getPatternWith(indexPath: indexPath)
@@ -66,7 +50,7 @@ extension FavoriteViewController: UITableViewDelegate {
         let detailVC = PatternDetailsViewController()
         detailVC.object = storageManager.getPatternWith(indexPath: indexPath)
         
-        present(detailVC, animated: true)
+        navigationController?.pushViewController(detailVC, animated: true)
         tableView.reloadData()
     }
 }
@@ -85,6 +69,7 @@ private extension FavoriteViewController {
     // MARK: - UI Setup
     func setupUI() {
         self.view.backgroundColor = UIColor.systemBackground
+        title = "Избранное"
     }
     
     // MARK: - Table Setup
