@@ -101,8 +101,6 @@
 			isa = PBXGroup;
 			children = (
 				6C9E79AD2E6251D500EB03D6 /* View Controllers */,
-				6C9E79AE2E6251E100EB03D6 /* Views */,
-				6C9E79B02E62520100EB03D6 /* Models */,
 				6C9E79AF2E6251EF00EB03D6 /* Resources */,
 				6C9E79AC2E62519200EB03D6 /* App */,
 			);
@@ -128,6 +126,8 @@
 				6C994E232E946718009BDF39 /* PatternDetailsViewController.swift */,
 				6CB1DABE2E6789B8009CF33B /* ContainerViewController.swift */,
 				6C994E252E946D96009BDF39 /* BottomSheetViewController.swift */,
+				6C9E79B02E62520100EB03D6 /* Models */,
+				6C9E79AE2E6251E100EB03D6 /* Views */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
