@@ -28,7 +28,10 @@ final class BottomSheetViewController: UIViewController {
     convenience init(selectedType: PatternType? = nil) {
         self.init(nibName: nil, bundle: nil)
         self.selectedType = selectedType
+        self.modalPresentationStyle = .overFullScreen
     }
+    
+    // тут разобраться с инитом до созовна
     
     // MARK: - Life Cycle Methods
     override func viewDidLoad() {
@@ -74,7 +77,7 @@ private extension BottomSheetViewController {
     }
     
     func setupContentView() {
-        contentView.backgroundColor = .systemBackground
+        contentView.backgroundColor = UIColor(resource: .sideMenu)
         contentView.layer.cornerRadius = 16
         contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         contentView.transform = CGAffineTransform(translationX: 0, y: 600)
@@ -152,7 +155,7 @@ private extension BottomSheetViewController {
         let button = UIButton(type: .system)
         
         var configuration = UIButton.Configuration.plain()
-        configuration.title = type.rawValue
+        configuration.title = type.title
         configuration.image = UIImage(systemName: "circle.dashed")
         
         configuration.imagePlacement = .trailing

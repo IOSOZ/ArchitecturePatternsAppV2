@@ -12,46 +12,17 @@ class FavoriteViewController: BaseContentViewController {
     // MARK: - Properties
     private var tableView = UITableView()
     private var storageManager = StorageManager.shared
-    
+    private var favoritePatterns: [Pattern] = []
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
-}
-
-// MARK: - UITableViewDataSource
-extension FavoriteViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        storageManager.getFavoritePatterns().count
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: PatternTableViewCell.identifier, for: indexPath) as? PatternTableViewCell else { return UITableViewCell() }
-        
-        let patternModel = storageManager.getFavoritePatterns()[indexPath.row]
-        
-        let isFirstCell = indexPath.row == 0 ? true : false
-        
-        cell.configure(with: patternModel, isFirstCell: isFirstCell)
-        
-        return cell
-    }
-}
-
-// MARK: - UITableViewDelegate
-extension FavoriteViewController: UITableViewDelegate {
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let pattern = storageManager.getPatternWith(indexPath: indexPath)
-        storageManager.incrementViewCounterFor(pattern: pattern)
-        
-        let detailVC = PatternDetailsViewController()
-        detailVC.object = storageManager.getPatternWith(indexPath: indexPath)
-        
-        navigationController?.pushViewController(detailVC, animated: true)
-        tableView.reloadData()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateData()
     }
 }
 
@@ -61,7 +32,7 @@ private extension FavoriteViewController {
     // MARK: - View Setup
     func setupView() {
         setupUI()
-        createTable()
+        setupTableView()
         addViews()
         setupConstraints()
     }
@@ -73,7 +44,7 @@ private extension FavoriteViewController {
     }
     
     // MARK: - Table Setup
-    func createTable() {
+    func setupTableView() {
         tableView.register(PatternTableViewCell.self, forCellReuseIdentifier: PatternTableViewCell.identifier)
         tableView.register(HeaderView.self, forHeaderFooterViewReuseIdentifier: HeaderView.identifier)
         tableView.delegate = self
@@ -92,5 +63,45 @@ private extension FavoriteViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+    
+    func updateData() {
+        favoritePatterns = storageManager.getFavoritePatterns()
+        tableView.reloadData()
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension FavoriteViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        favoritePatterns.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PatternTableViewCell.identifier, for: indexPath) as? PatternTableViewCell else { return UITableViewCell() }
+        
+        let patternModel = favoritePatterns[indexPath.row]
+        
+        let isFirstCell = indexPath.row == 0 ? true : false
+        
+        cell.configure(with: patternModel, isFirstCell: isFirstCell)
+        
+        return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension FavoriteViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let pattern = storageManager.getPatternByID(favoritePatterns[indexPath.row].id) else { return }
+        storageManager.incrementViewCounterFor(pattern: pattern)
+        
+        let detailVC = PatternDetailsViewController()
+        detailVC.object = storageManager.getPatternByID(pattern.id)
+        
+        
+        navigationController?.pushViewController(detailVC, animated: true)
+        
     }
 }

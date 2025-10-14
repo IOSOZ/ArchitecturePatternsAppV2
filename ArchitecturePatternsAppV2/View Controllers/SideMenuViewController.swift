@@ -36,29 +36,25 @@ final class SideMenuViewController: UIViewController {
     }
     
     // MARK: - Objc methods
-    @objc func didTapOOPButton() {
-        let oopVC = OOPViewController()
-        containerManager?.changeCurrentVC(to: oopVC)
-    }
-    
-    @objc func didTapDesignPatternsButton() {
-        let designPatternsVC = ArchitecturalPatternsViewController()
-        containerManager?.changeCurrentVC(to: designPatternsVC)
-    }
-    
-    @objc func didTapArchitecturalPatternsButton() {
-        let architecturalPatternsVC = DesignPatternsViewController()
-        containerManager?.changeCurrentVC(to: architecturalPatternsVC)
-    }
-    
-    @objc func didTapSOLIDButton() {
-        let solidVC = SOLIDViewController()
-        containerManager?.changeCurrentVC(to: solidVC)
-    }
-    
-    @objc func didTapFavoriteButton() {
-        let favoriteVC = FavoriteViewController()
-        containerManager?.changeCurrentVC(to: favoriteVC)
+    @objc func didTapSideMenuButton(_ sender: UIControl) {
+        let menuItem: MenuItem
+        
+        switch sender {
+        case OOPButton:
+            menuItem = .oop
+        case designPatternsButton:
+            menuItem = .designPatterns
+        case architecturalPatternsButton:
+            menuItem = .architecturalPatterns
+        case SOLIDButton:
+            menuItem = .solid
+        case favoriteButton:
+            menuItem = .favorite
+        default:
+            return
+        }
+        
+        containerManager?.performControllerChange(with: menuItem)
     }
 }
 
@@ -87,11 +83,11 @@ private extension SideMenuViewController {
         SOLIDButton = SideMenuButton(title: "Принципы SOLID", image: .arrowIcon)
         favoriteButton = SideMenuButton(title: "Избранное", image: .heart)
         
-        OOPButton.addTarget(self, action: #selector(didTapOOPButton), for: .touchUpInside)
-        designPatternsButton.addTarget(self, action: #selector(didTapDesignPatternsButton), for: .touchUpInside)
-        architecturalPatternsButton.addTarget(self, action: #selector(didTapArchitecturalPatternsButton), for: .touchUpInside)
-        SOLIDButton.addTarget(self, action: #selector(didTapSOLIDButton), for: .touchUpInside)
-        favoriteButton.addTarget(self, action: #selector(didTapFavoriteButton), for: .touchUpInside)
+        OOPButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
+        designPatternsButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
+        architecturalPatternsButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
+        SOLIDButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
+        favoriteButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
     }
     
     // MARK: - Add View

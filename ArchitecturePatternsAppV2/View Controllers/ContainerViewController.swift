@@ -10,7 +10,7 @@ import SnapKit
 
 // MARK: - ContainerManager Protocol
 protocol ContainerManger: AnyObject {
-    func changeCurrentVC(to newController: BaseContentViewController)
+    func performControllerChange(with menuItem: MenuItem)
     func toggleSideMenu() -> Bool
 }
 
@@ -20,7 +20,7 @@ final class ContainerViewController: UIViewController {
     
     private var currentController: BaseContentViewController!
     private var sideMenuController: SideMenuViewController!
-    private var navController: UINavigationController!
+    private var navController: UINavigationController?
     
     private var tapGesture: UITapGestureRecognizer!
     private var sideMenuIsShow = false
@@ -68,11 +68,13 @@ private extension ContainerViewController {
    
     // MARK: - Configure Navigation Controller
     func configureNavigationController() {
-        addChild(navController)
-        view.addSubview(navController.view)
-        navController.didMove(toParent: self)
-        
-        navController.navigationBar.tintColor = .black
+        if let navController {
+            addChild(navController)
+            view.addSubview(navController.view)
+            navController.didMove(toParent: self)
+            
+            navController.navigationBar.tintColor = .black
+        }
     }
     
     // MARK: - Configure Side VC
@@ -85,7 +87,6 @@ private extension ContainerViewController {
             sideMenuController.didMove(toParent: self)
         }
     }
-    
     
     // MARK: - Gesture Setup
     func setupGesture() {
@@ -115,9 +116,9 @@ private extension ContainerViewController {
         case .oop:
             controller = OOPViewController()
         case .designPatterns:
-            controller = ArchitecturalPatternsViewController()
-        case .architecturalPatterns:
             controller = DesignPatternsViewController()
+        case .architecturalPatterns:
+            controller = ArchitecturalPatternsViewController()
         case .solid:
             controller = SOLIDViewController()
         case .favorite:
@@ -128,43 +129,24 @@ private extension ContainerViewController {
         
         return controller
     }
-    
-    // MARK: - Perform Controller Change
-    func performControllerChange(to menuItem: MenuItem) {
-        let newController = createController(for: menuItem)
-        
-        navController.setViewControllers([newController], animated: false)
-        currentController = newController
-        
-        sideMenuIsShow = false
-        showSideMenu(shouldMove: false)
-        
-        if let mainVC = newController as? DesignPatternsViewController {
-            mainVC.rotateRightButton(isOpen: false)
-        }
-    }
 }
 
 // MARK: - ContainerManger
 extension ContainerViewController: ContainerManger {
 
     // MARK: - Change Current View Controller
-    func changeCurrentVC(to newController: BaseContentViewController) {
-        let menuItem: MenuItem
-        switch newController {
-        case is OOPViewController:
-            menuItem = .oop
-        case is ArchitecturalPatternsViewController:
-            menuItem = .architecturalPatterns
-        case is SOLIDViewController:
-            menuItem = .solid
-        case is FavoriteViewController:
-            menuItem = .favorite
-        default:
-            menuItem = .designPatterns
+    func performControllerChange(with menuItem: MenuItem) {
+        let newController = createController(for: menuItem)
+        if let navController {
+            navController.setViewControllers([newController], animated: false)
+            currentController = newController
         }
+        sideMenuIsShow = false
+        showSideMenu(shouldMove: false)
         
-        performControllerChange(to: menuItem)
+        if let mainVC = newController as? DesignPatternsViewController {
+            mainVC.rotateRightButton(isOpen: false)
+        }
     }
     
     // MARK: - Toggle Side Menu

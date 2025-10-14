@@ -15,6 +15,7 @@
 		6C994E1C2E918D65009BDF39 /* FavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C994E1B2E918D65009BDF39 /* FavoriteViewController.swift */; };
 		6C994E242E946718009BDF39 /* PatternDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C994E232E946718009BDF39 /* PatternDetailsViewController.swift */; };
 		6C994E262E946D97009BDF39 /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C994E252E946D96009BDF39 /* BottomSheetViewController.swift */; };
+		6C994E2C2E9D31C4009BDF39 /* FontExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C994E2B2E9D31C4009BDF39 /* FontExtension.swift */; };
 		6C9E79932E62517B00EB03D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9E798C2E62517B00EB03D6 /* AppDelegate.swift */; };
 		6C9E79942E62517B00EB03D6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9E79912E62517B00EB03D6 /* SceneDelegate.swift */; };
 		6C9E79952E62517B00EB03D6 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 6C9E798B2E62517B00EB03D6 /* .gitignore */; };
@@ -39,6 +40,7 @@
 		6C994E1B2E918D65009BDF39 /* FavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteViewController.swift; sourceTree = "<group>"; };
 		6C994E232E946718009BDF39 /* PatternDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternDetailsViewController.swift; sourceTree = "<group>"; };
 		6C994E252E946D96009BDF39 /* BottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetViewController.swift; sourceTree = "<group>"; };
+		6C994E2B2E9D31C4009BDF39 /* FontExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontExtension.swift; sourceTree = "<group>"; };
 		6C9E791F2E62469A00EB03D6 /* ArchitecturePatternsAppV2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArchitecturePatternsAppV2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C9E798B2E62517B00EB03D6 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		6C9E798C2E62517B00EB03D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -79,6 +81,14 @@
 			path = ContentViewControllers;
 			sourceTree = "<group>";
 		};
+		6C994E282E9D2F73009BDF39 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6C994E2B2E9D31C4009BDF39 /* FontExtension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		6C9E79162E62469A00EB03D6 = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +110,7 @@
 		6C9E79922E62517B00EB03D6 /* ArchitecturePatternsAppV2 */ = {
 			isa = PBXGroup;
 			children = (
+				6C994E282E9D2F73009BDF39 /* Extensions */,
 				6C9E79AD2E6251D500EB03D6 /* View Controllers */,
 				6C9E79AF2E6251EF00EB03D6 /* Resources */,
 				6C9E79AC2E62519200EB03D6 /* App */,
@@ -244,6 +255,7 @@
 				6C16D21A2E84002F0089E4CF /* SideMenuButton.swift in Sources */,
 				6C9E79B62E62521300EB03D6 /* PatternTableViewCell.swift in Sources */,
 				6CB1DAA12E648FE6009CF33B /* HeaderView.swift in Sources */,
+				6C994E2C2E9D31C4009BDF39 /* FontExtension.swift in Sources */,
 				6CB1DABF2E6789B8009CF33B /* ContainerViewController.swift in Sources */,
 				6C9E79B42E62520F00EB03D6 /* PatternModel.swift in Sources */,
 				6C994E0F2E918AF9009BDF39 /* BaseContentViewController.swift in Sources */,

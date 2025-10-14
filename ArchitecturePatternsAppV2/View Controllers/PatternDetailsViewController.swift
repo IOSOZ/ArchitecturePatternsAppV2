@@ -15,6 +15,7 @@ protocol PatternDetailsViewControllerDelegate: AnyObject {
 
 final class PatternDetailsViewController: UIViewController {
     
+    
     // MARK: - UI Properties
     private var patternImage = UIImageView()
     private var editPhotoButton = UIButton(type: .system)
@@ -25,16 +26,16 @@ final class PatternDetailsViewController: UIViewController {
     private var editButton: UIBarButtonItem!
     private let patternDescription = UITextView()
     
-    
     // MARK: - Properties
     private var storeManager = StorageManager.shared
     private var isEditingMode = false
     var object: Pattern!
-    
+    private var modifyObject: Pattern!
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.modifyObject = object
         setupView()
     }
     
@@ -49,20 +50,21 @@ final class PatternDetailsViewController: UIViewController {
                 action: #selector(cancelEditing)
                 
             )} else {
-                object.image = patternImage.image ?? UIImage(resource: .technicalWork)
-                object.name = patternName.text ?? ""
-                object.description = patternDescription.text
+                modifyObject.image = patternImage.image ?? UIImage(resource: .technicalWork)
+                modifyObject.name = patternName.text ?? ""
+                modifyObject.description = patternDescription.text
+                storeManager.updatePattern(modifyObject)
                 
-                storeManager.updatePattern(object)
+                object = modifyObject
                 
                 navigationItem.leftBarButtonItem = nil
             }
     }
     
     @objc func choosePatternTypeButtonTapped() {
-        let botomVC = BottomSheetViewController(selectedType: object.type)
-        botomVC.delegate = self
-        present(botomVC, animated: true)
+        let bottomVC = BottomSheetViewController(selectedType: object.type)
+        bottomVC.delegate = self
+        present(bottomVC, animated: true,)
     }
     
     @objc func choosePhoto() {
@@ -157,7 +159,7 @@ private extension PatternDetailsViewController {
     func updateData(with _ : Pattern) {
         patternImage.image = object.image
         patternName.text = object.name
-        patternTypeLabel.text = "Тип: \(object.type.rawValue)"
+        patternTypeLabel.text = "Тип: \(object.type.title)"
         patternDescription.text = object.description
     }
     
@@ -258,7 +260,8 @@ extension PatternDetailsViewController: PHPickerViewControllerDelegate {
 // MARK: - PatternDetailsViewControllerDelegate
 extension PatternDetailsViewController: PatternDetailsViewControllerDelegate {
     func updatePatternType(_ patternType: PatternType) {
-        object.type = patternType
-        patternTypeLabel.text = "Тип: \(object.type.rawValue)"
+        patternTypeLabel.text = "Тип: \(patternType.title)"
+        modifyObject.type = patternType
+        
     }
 }
