@@ -8,6 +8,14 @@
 import SnapKit
 import UIKit
 
+enum MenuItem {
+    case oop
+    case designPatterns
+    case architecturalPatterns
+    case solid
+    case favorite
+}
+
 final class SideMenuViewController: UIViewController {
 
     // MARK: - UI Properties
@@ -18,6 +26,8 @@ final class SideMenuViewController: UIViewController {
     private var favoriteButton = UIControl()
 
     private var buttonVerticalStack = UIStackView()
+    
+    weak var containerManager: ContainerManger?
 
     // MARK: - Life cycle methods
     override func viewDidLoad() {
@@ -26,9 +36,25 @@ final class SideMenuViewController: UIViewController {
     }
     
     // MARK: - Objc methods
-    @objc func didTapFavoriteButton() {
-        let favoriteVC = FavoriteViewController()
-        present(favoriteVC, animated: true)
+    @objc func didTapSideMenuButton(_ sender: UIControl) {
+        let menuItem: MenuItem
+        
+        switch sender {
+        case OOPButton:
+            menuItem = .oop
+        case designPatternsButton:
+            menuItem = .designPatterns
+        case architecturalPatternsButton:
+            menuItem = .architecturalPatterns
+        case SOLIDButton:
+            menuItem = .solid
+        case favoriteButton:
+            menuItem = .favorite
+        default:
+            return
+        }
+        
+        containerManager?.performControllerChange(with: menuItem)
     }
 }
 
@@ -57,9 +83,14 @@ private extension SideMenuViewController {
         SOLIDButton = SideMenuButton(title: "Принципы SOLID", image: .arrowIcon)
         favoriteButton = SideMenuButton(title: "Избранное", image: .heart)
         
-        favoriteButton.addTarget(self, action: #selector(didTapFavoriteButton), for: .touchUpInside)
+        OOPButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
+        designPatternsButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
+        architecturalPatternsButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
+        SOLIDButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
+        favoriteButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
     }
     
+    // MARK: - Add View
     func addViews() {
         buttonVerticalStack.addArrangedSubview(OOPButton)
         buttonVerticalStack.addArrangedSubview(designPatternsButton)
@@ -73,7 +104,7 @@ private extension SideMenuViewController {
     // MARK: - Stack Setup
     func setupStack() {
         buttonVerticalStack.axis = .vertical
-        buttonVerticalStack.spacing = 60
+        buttonVerticalStack.spacing = 40
         buttonVerticalStack.alignment = .leading
     }
     

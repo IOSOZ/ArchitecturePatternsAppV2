@@ -9,9 +9,20 @@ import Foundation
 import UIKit
 
 enum PatternType: String, CaseIterable {
-    case creational = "ПОРОЖДАЮЩИЕ"
-    case structural = "СТРУКТУРНЫЕ"
-    case behavioral = "ПОВЕДЕНЧЕСКИЕ"
+    case creational
+    case structural
+    case behavioral
+    
+    var title: String {
+        switch self {
+        case .creational:
+            return "ПОРОЖДАЮЩИЕ"
+        case .structural:
+            return "СТРУКТУРНЫЕ"
+        case .behavioral:
+            return "ПОВЕДЕНЧЕСКИЕ"
+        }
+    }
 }
 
 struct Pattern {
@@ -210,7 +221,7 @@ final class StorageManager {
         return [dataStore.creationalPatterns, dataStore.structuralPatterns, dataStore.behavioralPatterns]
     }
     
-    func getPatternWith(indexPath: IndexPath) -> Pattern {
+    func getPatternFor(indexPath: IndexPath) -> Pattern {
         return dataStore[indexPath.section][indexPath.row]
         }
         
@@ -259,7 +270,6 @@ final class StorageManager {
                 dataStore.structuralPatterns[index] = pattern
             }
         }
-        
     }
     
     func incrementViewCounterFor(pattern : Pattern) {

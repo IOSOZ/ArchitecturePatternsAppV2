@@ -30,14 +30,6 @@ final class PatternTableViewCell: UITableViewCell {
     
     private var object: Pattern!
     
-    // MARK: - Properties
-    enum UIElement {
-        case nameLabel
-        case descriptionLabel
-        case viewCounterLabel
-        case arrowLabel
-    }
-    
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -69,10 +61,33 @@ final class PatternTableViewCell: UITableViewCell {
         containerView.layer.shadowOpacity = 0.25
         containerView.layer.shadowOffset = CGSize(width: 0, height: 4)
         
-        nameLabel.attributedText = NSAttributedString(string: "\(patternModel.name)", attributes: getAttributesFor(.nameLabel))
-        descriptionLabel.attributedText = NSAttributedString(string: "\(patternModel.description)", attributes: getAttributesFor(.descriptionLabel))
-        viewCounterLabel.attributedText = NSAttributedString(string: "Посмотрено раз: \(patternModel.viewCounter)", attributes: getAttributesFor(.viewCounterLabel))
-        arrowLabel.attributedText = NSAttributedString(string: "􀆊", attributes: getAttributesFor(.arrowLabel))
+        nameLabel.getAttributedStringWith(
+            title: "\(patternModel.name)",
+            font: UIFont.sfProSemibold(with: .small),
+            minimumLineHeight: 24
+        )
+        
+        descriptionLabel.getAttributedStringWith(
+            title: "\(patternModel.description)",
+            font: UIFont.sfProRegular(with: .small),
+            minimumLineHeight: 24,
+            lineBreakMode: .byTruncatingTail,
+            foregroundColor: UIColor(named: "labelSecondary")
+        )
+        
+        viewCounterLabel.getAttributedStringWith(
+            title: "Посмотрено раз: \(patternModel.viewCounter)",
+            font: UIFont.sfProRegular(with: .xSmall),
+            foregroundColor: .blackAlpha52
+        )
+        
+        arrowLabel.getAttributedStringWith(
+            title: "􀆊",
+            font: UIFont.sfProSemibold(with: .medium),
+            minimumLineHeight: 22,
+            alignment: .center,
+            foregroundColor: .labelTertiary
+        )
         
         descriptionLabel.numberOfLines = 2
         patternImage.image = patternModel.image
@@ -113,12 +128,12 @@ private extension PatternTableViewCell {
     // MARK: - SetUP View
     func setupView() {
         addViews()
-        setUpStacks()
+        setUpViews()
         setupConstraints()
     }
     
     // MARK: - Stacks SetUp
-    func setUpStacks() {
+    func setUpViews() {
         nameAndDescriptionStack.axis = .vertical
         nameAndDescriptionStack.alignment = .leading
         nameAndDescriptionStack.spacing = 0
@@ -156,7 +171,6 @@ private extension PatternTableViewCell {
     
     // MARK: - Constraints SetUp
     func setupConstraints() {
-        
         patternImage.snp.makeConstraints { make in
             make.height.equalTo(60)
             make.width.equalTo(80)
@@ -189,43 +203,33 @@ private extension PatternTableViewCell {
             make.trailing.equalToSuperview().inset(16)
         }
     }
-    
-    // MARK: - Get Attributes For UI Element
-    func getAttributesFor(_ element: UIElement) -> [NSAttributedString.Key : Any] {
+}
+
+// MARK: - UILabel Extension
+extension UILabel {
+    func getAttributedStringWith(title: String, font: UIFont, minimumLineHeight: CGFloat? = 0, alignment: NSTextAlignment? = nil, lineBreakMode: NSLineBreakMode? = nil, foregroundColor: UIColor? = nil) {
         
-        switch element {
-        case . nameLabel:
-            let nameLabelStyle = NSMutableParagraphStyle()
-            nameLabelStyle.minimumLineHeight = 24
-            return [
-                .font: UIFont(name: "SFPro-Semibold", size: 13) ?? .systemFont(ofSize: 13, weight: .semibold),
-                .paragraphStyle: nameLabelStyle
-            ]
-        case . descriptionLabel:
-            let descriptionLabelStyle = NSMutableParagraphStyle()
-            descriptionLabelStyle.minimumLineHeight = 24
-            descriptionLabelStyle.lineBreakMode = .byTruncatingTail
-            return [
-                .font: UIFont(name: "SFPro-Regular", size: 13) ?? .systemFont(ofSize: 13, weight: .regular),
-                .foregroundColor: UIColor(named: "labelSecondary") ?? .gray,
-                .paragraphStyle: descriptionLabelStyle
-            ]
-        case .viewCounterLabel:
-            let viewCounterLabelStyle = NSMutableParagraphStyle()
-            return [
-                .font: UIFont(name: "SFPro-Regular", size: 8) ?? .systemFont(ofSize: 8, weight: .regular),
-                .foregroundColor: UIColor(white: 0, alpha: 0.52),
-                .paragraphStyle: viewCounterLabelStyle
-            ]
-        case .arrowLabel:
-            let arrowLabelStyle = NSMutableParagraphStyle()
-            arrowLabelStyle.minimumLineHeight = 22
-            arrowLabelStyle.alignment = .center
-            return [
-                .font: UIFont(name: "SFPro-Semibold", size: 17) ?? .systemFont(ofSize: 17, weight: .regular),
-                .foregroundColor: UIColor(named: "labelTertiary") ?? .gray,
-                .paragraphStyle: arrowLabelStyle
-            ]
+        let style = NSMutableParagraphStyle()
+        
+        if let minimumLineHeight {
+            style.minimumLineHeight = minimumLineHeight
         }
+        
+        if let alignment {
+            style.alignment = alignment
+        }
+        
+        if let lineBreakMode {
+            style.lineBreakMode = lineBreakMode
+        }
+        
+        let attributes: [NSAttributedString.Key : Any] = [
+            .font: font,
+            .foregroundColor: foregroundColor ?? .black,
+            .paragraphStyle: style
+        ]
+        
+        self.attributedText = NSAttributedString(string: title, attributes: attributes)
     }
 }
+    
