@@ -68,7 +68,7 @@ final class PatternTableViewCell: UITableViewCell {
         )
         
         descriptionLabel.getAttributedStringWith(
-            title: "\(patternModel.description)",
+            title: "\(patternModel.description ?? "")",
             font: UIFont.sfProRegular(with: .small),
             minimumLineHeight: 24,
             lineBreakMode: .byTruncatingTail,

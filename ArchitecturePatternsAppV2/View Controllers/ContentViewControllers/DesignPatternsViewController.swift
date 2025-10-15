@@ -25,6 +25,11 @@ final class DesignPatternsViewController: BaseContentViewController {
         super.viewWillAppear(animated)
         tableView.reloadData()
     }
+    
+    @objc override func didTapLeftButton() {
+        let patternCreationVC = PatternCreationViewController()
+        navigationController?.pushViewController(patternCreationVC, animated: true)
+    }
 }
 
 // MARK: - Private Methods
@@ -91,9 +96,9 @@ extension DesignPatternsViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension DesignPatternsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier) as? HeaderView else {return UIView()}
+        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier) as? HeaderView else {return UITableViewHeaderFooterView()}
         
-        let headerTitle = storageManager.getAllPatterns()[section][0].type.title
+        let headerTitle = PatternType.allCases[section].title
         
         header.configureUI(with: headerTitle)
         
@@ -113,5 +118,16 @@ extension DesignPatternsViewController: UITableViewDelegate {
         
         navigationController?.pushViewController(detailVC, animated: true)
         tableView.reloadData()
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
+            let pattern = self.storageManager.getPatternFor(indexPath: indexPath)
+            self.storageManager.removePattern(pattern)
+            
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }
