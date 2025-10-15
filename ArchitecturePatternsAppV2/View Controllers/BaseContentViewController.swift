@@ -34,7 +34,7 @@ class BaseContentViewController: UIViewController {
     }
     
     // MARK: - Objc methods
-    @objc private func didTapLeftButton() {
+    @objc func didTapLeftButton() {
         // Реализую в след раз, не успеваю( 
     }
     

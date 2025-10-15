@@ -29,8 +29,8 @@ struct Pattern {
     let id = UUID()
     var type: PatternType
     var name: String
-    var description: String
-    var image: UIImage
+    var description: String?
+    var image: UIImage?
     var viewCounter: Int = 0
     var isFavorite: Bool = false
 }

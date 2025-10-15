@@ -19,16 +19,23 @@ final class BottomSheetViewController: UIViewController {
     
     // MARK: - Properties
     private var selectedType: PatternType?
-    var onTypeSelected: ((PatternType) -> Void)?
-    weak var delegate: PatternDetailsViewController?
+    weak var delegate: BottomSheetDelegate?
     
     private var heightConstraint: Constraint?
    
     // MARK: - Initialization
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
     convenience init(selectedType: PatternType? = nil) {
         self.init(nibName: nil, bundle: nil)
         self.selectedType = selectedType
         self.modalPresentationStyle = .overFullScreen
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // тут разобраться с инитом до созовна
@@ -199,7 +206,6 @@ private extension BottomSheetViewController {
     
     @objc func okTapped() {
         guard let selectedType = selectedType else { return }
-        onTypeSelected?(selectedType)
         delegate?.updatePatternType(selectedType)
         dismissWithAnimation()
     }
