@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BaseContentViewController: UIViewController {
+class BaseContentViewController: RootViewController {
     
     // MARK: - ContainerViewController Delgate
     weak var container: ContainerViewController?

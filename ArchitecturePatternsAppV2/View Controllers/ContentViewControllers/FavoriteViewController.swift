@@ -40,6 +40,7 @@ private extension FavoriteViewController {
     // MARK: - UI Setup
     func setupUI() {
         self.view.backgroundColor = UIColor.systemBackground
+        self.navigationItem.leftBarButtonItem = nil
         title = "Избранное"
     }
     

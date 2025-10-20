@@ -13,7 +13,7 @@ protocol BottomSheetDelegate: AnyObject {
     func updatePatternType(_ patternType: PatternType)
 }
 
-final class PatternDetailsViewController: UIViewController {
+final class PatternDetailsViewController: RootViewController {
     
     
     // MARK: - UI Properties
@@ -123,6 +123,7 @@ private extension PatternDetailsViewController {
             action: #selector(didTapRightBarButton)
         )
         navigationItem.rightBarButtonItem = editButton
+        navigationItem.title = object.name
     }
     
     // MARK: - Setup UI
@@ -281,5 +282,13 @@ extension PatternDetailsViewController: BottomSheetDelegate {
         patternTypeLabel.text = "Тип: \(patternType.title)"
         modifyObject.type = patternType
         
+    }
+}
+
+// MARK: - UI TextField Delegate
+extension PatternDetailsViewController: UITextFieldDelegate {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        self.view.endEditing(true)
     }
 }

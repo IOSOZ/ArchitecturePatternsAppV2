@@ -8,7 +8,7 @@
 import UIKit
 import PhotosUI
 
-final class PatternCreationViewController: UIViewController {
+final class PatternCreationViewController: RootViewController {
     
     // MARK: - UI Properties
     private var patternImage = UIImageView()
@@ -112,6 +112,7 @@ private extension PatternCreationViewController {
             target: self,
             action: #selector(cancelEditing)
         )
+        navigationItem.title = "Паттерн проектирвония"
     }
     
     // MARK: - Setup UI
@@ -248,6 +249,14 @@ extension PatternCreationViewController: BottomSheetDelegate {
         patternTypeLabel.textColor = UIColor.black
         self.patternType = patternType
         print(patternType)
+    }
+}
+
+// MARK: - UI TextField Delegate
+extension PatternCreationViewController: UITextFieldDelegate {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        self.view.endEditing(true)
     }
 }
 

@@ -16,7 +16,7 @@ enum MenuItem {
     case favorite
 }
 
-final class SideMenuViewController: UIViewController {
+final class SideMenuViewController: RootViewController {
 
     // MARK: - UI Properties
     private var OOPButton = UIControl()

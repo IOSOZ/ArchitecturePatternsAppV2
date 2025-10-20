@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class ImageViewerViewController: UIViewController {
+final class ImageViewerViewController: RootViewController {
 
     // MARK: - UI Properties
     private let scrollView = UIScrollView()

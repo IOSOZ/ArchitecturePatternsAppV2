@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class BottomSheetViewController: UIViewController {
+final class BottomSheetViewController: RootViewController {
     
     // MARK: - UI Properties
     private let stackView = UIStackView()
