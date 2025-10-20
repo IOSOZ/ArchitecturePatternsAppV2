@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BaseContentViewController: UIViewController {
+class BaseContentViewController: RootViewController {
     
     // MARK: - ContainerViewController Delgate
     weak var container: ContainerViewController?
@@ -34,7 +34,7 @@ class BaseContentViewController: UIViewController {
     }
     
     // MARK: - Objc methods
-    @objc private func didTapLeftButton() {
+    @objc func didTapLeftButton() {
         // Реализую в след раз, не успеваю( 
     }
     

@@ -14,7 +14,7 @@ protocol ContainerManger: AnyObject {
     func toggleSideMenu() -> Bool
 }
 
-final class ContainerViewController: UIViewController {
+final class ContainerViewController: RootViewController {
     
     // MARK: - Properties
     
