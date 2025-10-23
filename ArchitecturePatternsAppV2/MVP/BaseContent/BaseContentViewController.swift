@@ -12,16 +12,16 @@ class BaseContentViewController: RootViewController {
     // MARK: - ContainerViewController Delgate
     weak var container: ContainerViewController?
     
+    var basePresenter: BaseContentPresenterProtocol?
+    
     // MARK: - Life Cycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        
+        print("\(String(describing: self.basePresenter))")
     }
-    
-    deinit {
-        print("\(self.description) выгрузился")
-    }
-    
+
     // MARK: - Public Methods
     func rotateRightButton(isOpen: Bool) {
         guard let customView = navigationItem.rightBarButtonItem?.customView else { return }
@@ -39,9 +39,7 @@ class BaseContentViewController: RootViewController {
     }
     
     @objc private func didTapRightButton() {
-        if let isShown = container?.toggleSideMenu() {
-            rotateRightButton(isOpen: isShown)
-        }
+        basePresenter?.didTapRightBarButton()
     }
 }
 
@@ -74,5 +72,14 @@ private extension BaseContentViewController {
         customButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
         customButton.addTarget(self, action: action, for: .touchUpInside)
         return UIBarButtonItem(customView: customButton)
+    }
+}
+
+
+extension BaseContentViewController: BaseContentViewProtocol {
+    func showSideMenu() {
+        if let isShown = container?.toggleSideMenu() {
+            rotateRightButton(isOpen: isShown)
+        }
     }
 }
