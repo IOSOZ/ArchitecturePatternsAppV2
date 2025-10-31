@@ -9,6 +9,11 @@ import Foundation
 #warning("Избавиться от UIKit")
 import UIKit
 
+protocol PatternDetailsPresenterProtocol: AnyObject {
+    func getData()
+    func savePatternChanges()
+}
+
 class PatternDetailsPresenter: PatternDetailsPresenterProtocol {
    
     weak var view: PatternDetailsViewProtocol?
@@ -22,9 +27,9 @@ class PatternDetailsPresenter: PatternDetailsPresenterProtocol {
         self.objectID = objectID
     }
     
-    func didTapSaveButton() {
+    func savePatternChanges() {
         guard
-            let fields = view?.editedFields(),
+            let fields = view?.getEditedFields(),
             var pattern = storage.getPatternByID(objectID)
         else { return }
         
@@ -34,12 +39,12 @@ class PatternDetailsPresenter: PatternDetailsPresenterProtocol {
         pattern.type = fields.type
         
         storage.updatePattern(pattern)
-        view?.display(pattern: pattern)
+        view?.displayFieldsWith(pattern: pattern)
            
     }
     
-    func viewDidLoad() {
+    func getData() {
         guard let pattern = storage.getPatternByID(objectID) else { return }
-        view?.display(pattern: pattern)
+        view?.displayFieldsWith(pattern: pattern)
     }
 }

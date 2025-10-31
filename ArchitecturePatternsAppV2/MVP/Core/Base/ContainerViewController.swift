@@ -11,11 +11,13 @@ import SnapKit
 
 final class ContainerViewController: RootViewController {
     
-    // MARK: - Properties
+    // MARK: - MVP Dependency Inversion
+    var deps: ModuleDeps!
     
+    // MARK: - Properties
     private var currentController: BaseContentViewController!
     private var sideMenuController: SideMenuViewController!
-    private var navController: UINavigationController?
+    private(set) var navController: UINavigationController?
     
     private var tapGesture: UITapGestureRecognizer!
     private var sideMenuIsShow = false
@@ -26,16 +28,29 @@ final class ContainerViewController: RootViewController {
         setupView()
     }
     
+    func embedd(_ nav: UINavigationController) {
+        self.navController = nav
+        addChild(nav)
+        view.addSubview(nav.view)
+        nav.didMove(toParent: self)
+        
+        nav.navigationBar.tintColor = .black
+        
+        self.currentController = nav.viewControllers.first as? BaseContentViewController
+        
+        if let sideMenuView = sideMenuController?.view {
+            view.bringSubviewToFront(sideMenuView)
+        }
+    }
+
+    
     // MARK: - OBJC Methods
     @objc func didTapOutSideSideMenu(_ gesture: UITapGestureRecognizer) {
         let tapLocation = gesture.location(in: view)
         if sideMenuIsShow && !sideMenuController.view.frame.contains(tapLocation) {
             sideMenuIsShow.toggle()
             showSideMenu(shouldMove: sideMenuIsShow)
-            
-            if let currentVC = currentController {
-                currentVC.rotateRightButton(isOpen: sideMenuIsShow)
-            }
+            currentController?.rotateRightButton(isOpen: sideMenuIsShow)
         }
     }
 }
@@ -45,29 +60,8 @@ private extension ContainerViewController {
     
     // MARK: - View Setup
     private func setupView() {
-        configureMainVC()
         configureSideMenuVC()
         setupGesture()
-    }
-    
-    // MARK: - Configure Main VC
-    func configureMainVC() {
-        let mainVC = DesignPatternsBuilder.createModule(for: DesignPatternsViewController(), container: self, storage: StorageManager())
-        currentController = mainVC
-        
-        navController = UINavigationController(rootViewController: currentController)
-        
-        configureNavigationController()
-    }
-   
-    // MARK: - Configure Navigation Controller
-    func configureNavigationController() {
-        if let navController {
-            addChild(navController)
-            view.addSubview(navController.view)
-            navController.didMove(toParent: self)
-            navController.navigationBar.tintColor = .black
-        }
     }
     
     // MARK: - Configure Side VC
@@ -76,7 +70,12 @@ private extension ContainerViewController {
             sideMenuController = SideMenuViewController()
             sideMenuController.deleagate = self
             addChild(sideMenuController)
-            view.insertSubview(sideMenuController.view, at: 1)
+            
+            if let nav = navController {
+                view.insertSubview(sideMenuController.view, aboveSubview: nav.view)
+            } else {
+                view.addSubview(sideMenuController.view)
+            }
             sideMenuController.didMove(toParent: self)
         }
     }
@@ -109,13 +108,13 @@ private extension ContainerViewController {
         case .oop:
             controller = OOPViewController()
         case .designPatterns:
-            controller = DesignPatternsBuilder.createModule(for: DesignPatternsViewController(), container: self, storage: StorageManager())
+            controller = GlobalBuilder.designPatterns(deps)
         case .architecturalPatterns:
             controller = ArchitecturalPatternsViewController()
         case .solid:
             controller = SOLIDViewController()
         case .favorite:
-            controller = FavoriteBuilder.createModule(for: FavoriteViewController(), container: self, storage: StorageManager())
+            controller = GlobalBuilder.favorite(deps)
         }
         
         controller.container = self

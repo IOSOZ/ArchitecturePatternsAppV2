@@ -7,6 +7,10 @@
 
 import Foundation
 
+protocol PatternCreationPresenterProtocol {
+    func createPattern()
+}
+
 final class PatternCreationPresenter: PatternCreationPresenterProtocol {
     weak var view: PatternCreationViewController?
     private let storage: PatternStorageProtocol
@@ -16,8 +20,8 @@ final class PatternCreationPresenter: PatternCreationPresenterProtocol {
         self.storage = storage
     }
     
-    func didTapSaveButton() {
-        guard let fields = view?.fieldFields() else { return }
+    func createPattern() {
+        guard let fields = view?.getEditedFields() else { return }
         let pattern = Pattern(type: fields.type, name: fields.name, description: fields.description, image: fields.image)
         
         storage.addNewPattern(pattern)

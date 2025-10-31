@@ -7,6 +7,13 @@
 
 import Foundation
 
+protocol DesignPatternsPresenterProtocol: AnyObject  {
+    func getData()
+    func getPattern(at indexPath: IndexPath)
+    func deletePattern(at indexPath: IndexPath)
+    func toggleFavoriteForPattern(at indexPath: IndexPath)
+}
+
 final class DesignPatternsPresenter: DesignPatternsPresenterProtocol {
     
     weak var view: DesignPatternsViewProtocol?
@@ -18,31 +25,27 @@ final class DesignPatternsPresenter: DesignPatternsPresenterProtocol {
         self.storage = storage
     }
     
-    func viewDidLoad() {
-        view?.reloadData()
+    func getData() {
+        view?.refreshView()
     }
     
-    func viewWillAppear() {
-        view?.reloadData()
-    }
-    
-    func didSelectRow(at indexPath: IndexPath) {
+    func getPattern(at indexPath: IndexPath) {
         let pattern = storage.getPatternFor(indexPath: indexPath)
         storage.incrementViewCounterFor(pattern: pattern)
-        view?.reloadData()
+        view?.refreshView()
         view?.showPatternDetails(forID: pattern.id)
     }
     
-    func didSwipeToDelete(at indexPath: IndexPath) {
+    func deletePattern(at indexPath: IndexPath) {
         let pattern = patterns[indexPath.section][indexPath.row]
         storage.removePattern(pattern)
-        view?.reloadData()
+        view?.refreshView()
     }
     
-    func didTapFavorite(at indexPath: IndexPath) {
+    func toggleFavoriteForPattern(at indexPath: IndexPath) {
         var pattern = storage.getPatternFor(indexPath: indexPath)
         pattern.isFavorite.toggle()
         storage.updatePattern(pattern)
-        view?.reloadData()
+        view?.refreshView()
     }
 }

@@ -9,8 +9,9 @@ import UIKit
 
 class BaseContentViewController: RootViewController {
     
-    // MARK: - ContainerViewController Delegate
-    weak var container: ContainerViewController?
+    // MARK: - MVP Dependency Inversion
+    var deps: ModuleDeps!
+    weak var container: ContainerViewController?    
     
     // MARK: - Life Cycle Methods
     override func viewDidLoad() {

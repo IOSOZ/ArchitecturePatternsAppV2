@@ -7,6 +7,11 @@
 
 import Foundation
 
+protocol FavoritePresenterProtocol: AnyObject {
+    func getData()
+    func getPattern(at indexPath: IndexPath)
+}
+
 final class FavoritePatternsPresenter: FavoritePresenterProtocol {
     weak var view: FavoriteViewProtocol?
     
@@ -18,19 +23,16 @@ final class FavoritePatternsPresenter: FavoritePresenterProtocol {
         self.storage = storage
     }
     
-    func viewDidLoad() {
-        view?.reloadData()
+    func getData() {
+        view?.refreshView()
     }
     
-    func viewWillAppear() {
-        view?.reloadData()
-    }
     
-    func didSelectRow(at indexPath: IndexPath) {
+    func getPattern(at indexPath: IndexPath) {
         let favoritePatterns = storage.getFavoritePatterns()
         guard let pattern = storage.getPatternByID(favoritePatterns[indexPath.row].id) else { return }
         storage.incrementViewCounterFor(pattern: pattern)
-        view?.reloadData()
+        view?.refreshView()
         view?.showPatternDetails(forID: pattern.id)
     }
 }

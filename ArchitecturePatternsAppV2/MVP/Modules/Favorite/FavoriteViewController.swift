@@ -8,6 +8,11 @@
 import UIKit
 import SnapKit
 
+protocol FavoriteViewProtocol: AnyObject {
+    func refreshView()
+    func showPatternDetails(forID id: UUID)
+}
+
 final class FavoriteViewController: BaseContentViewController {
     
     // MARK: - Properties
@@ -20,12 +25,12 @@ final class FavoriteViewController: BaseContentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        presenter.viewDidLoad()
+        presenter.getData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        presenter.viewWillAppear()
+        presenter.getData()
     }
 }
 
@@ -96,19 +101,19 @@ extension FavoriteViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension FavoriteViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        presenter.didSelectRow(at: indexPath)
+        presenter.getPattern(at: indexPath)
         
     }
 }
 
 // MARK: - FavoriteView Protocol
 extension FavoriteViewController: FavoriteViewProtocol {
-    func reloadData() {
+    func refreshView() {
         tableView.reloadData()
     }
     
     func showPatternDetails(forID id: UUID) {
-        let detailVC = PatternDetailsBuilder.createModule(for: PatternDetailsViewController(), storage: StorageManager(), objectID: id)
+        let detailVC = GlobalBuilder.patternDetails(deps, id: id)
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }

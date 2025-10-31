@@ -9,9 +9,12 @@ import PhotosUI
 import UIKit
 import SnapKit
 
+protocol PatternDetailsViewProtocol: AnyObject {
+    func displayFieldsWith(pattern: Pattern)
+    func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)?
+}
+
 final class PatternDetailsViewController: RootViewController {
-    
-  
     
     // MARK: - UI Properties
     private var patternImage = UIImageView()
@@ -34,7 +37,7 @@ final class PatternDetailsViewController: RootViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        presenter.viewDidLoad()
+        presenter.getData()
     }
     
     // MARK: - Objc methods
@@ -47,18 +50,18 @@ final class PatternDetailsViewController: RootViewController {
                 target: self,
                 action: #selector(cancelEditing)
             )
-            editButton.image = UIImage(systemName: "checkmark")
+            editButton.image = UIImage(resource: .done)
         } else {
             navigationItem.leftBarButtonItem = nil
-            presenter.didTapSaveButton()
-            editButton.image = UIImage(resource: .done)
+            presenter.savePatternChanges()
+            editButton.image = UIImage(resource: .editMode)
         }
     }
     
     @objc func cancelEditing() {
         navigationItem.leftBarButtonItem = nil
         editButton.image = UIImage(resource: .editMode)
-        presenter.viewDidLoad()
+        presenter.getData()
         toggleEditMode()
     }
     
@@ -264,7 +267,7 @@ extension PatternDetailsViewController: PHPickerViewControllerDelegate {
 }
 
 extension PatternDetailsViewController: PatternDetailsViewProtocol {
-    func editedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)? {
+    func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)? {
         let name = (patternName.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else { return nil }
         
@@ -276,7 +279,7 @@ extension PatternDetailsViewController: PatternDetailsViewProtocol {
         )
     }
     
-    func display(pattern: Pattern) {
+    func displayFieldsWith(pattern: Pattern) {
         navigationItem.title = pattern.name
         patternImage.image = pattern.image
         patternName.text = pattern.name

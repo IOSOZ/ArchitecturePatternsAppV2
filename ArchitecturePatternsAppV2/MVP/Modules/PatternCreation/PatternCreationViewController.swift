@@ -8,6 +8,10 @@
 import UIKit
 import PhotosUI
 
+protocol PatternCreationViewProtocol {
+    func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)?
+}
+
 final class PatternCreationViewController: RootViewController {
     
     // MARK: - UI Properties
@@ -36,7 +40,7 @@ final class PatternCreationViewController: RootViewController {
     
     // MARK: - Objc methods
     @objc func didTapRightBarButton() {
-        presenter.didTapSaveButton()
+        presenter.createPattern()
     }
     
     @objc func cancelEditing() {
@@ -245,7 +249,7 @@ extension PatternCreationViewController: UITextFieldDelegate {
 
 // MARK: - PatternCreationView Protocol
 extension PatternCreationViewController: PatternCreationViewProtocol {
-    func fieldFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)? {
+    func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)? {
         if let type = selectedType, let name = patternNameTextField.text {
             navigationController?.popViewController(animated: true)
             return (

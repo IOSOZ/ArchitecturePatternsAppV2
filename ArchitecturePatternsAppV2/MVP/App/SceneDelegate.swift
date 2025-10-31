@@ -15,8 +15,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
+        let storage = StorageManager()
+        let containerVC = ContainerViewController()
+        let deps = ModuleDeps(storage: storage, container: containerVC)
+        
+        containerVC.deps = deps
+        
+        let startVC = GlobalBuilder.designPatterns(deps)
+       
+        let navVC = UINavigationController(rootViewController: startVC)
+        
+        containerVC.embedd(navVC)
+        
         self.window = UIWindow(windowScene: windowScene)
-        self.window?.rootViewController = ContainerViewController()
+        self.window?.rootViewController = containerVC
         self.window?.makeKeyAndVisible()
     }
 
