@@ -35,7 +35,7 @@ final class DesignPatternsViewController: BaseContentViewController {
     
     @objc override func didTapLeftButton() {
     
-        let patternCreationVC = GlobalBuilder.patternCreation(deps)
+        let patternCreationVC = GlobalBuilder.create(.patternCreation)
         navigationController?.pushViewController(patternCreationVC, animated: true)
     }
 }
@@ -139,7 +139,7 @@ extension DesignPatternsViewController: DesignPatternsViewProtocol {
     }
 
     func showPatternDetails(forID id: UUID) {
-        let detailVC = GlobalBuilder.patternDetails(deps, id: id)
+        let detailVC = GlobalBuilder.create(.patternDetails(id))
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }

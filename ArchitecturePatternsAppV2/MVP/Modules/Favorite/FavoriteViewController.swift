@@ -113,7 +113,7 @@ extension FavoriteViewController: FavoriteViewProtocol {
     }
     
     func showPatternDetails(forID id: UUID) {
-        let detailVC = GlobalBuilder.patternDetails(deps, id: id)
+        let detailVC = GlobalBuilder.create(.patternDetails(id))
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }

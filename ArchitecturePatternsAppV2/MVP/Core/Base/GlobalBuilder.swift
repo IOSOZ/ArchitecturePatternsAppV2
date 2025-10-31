@@ -7,57 +7,50 @@
 
 import Foundation
 
+enum Router {
+    case designPatterns
+    case favorite
+    case patternDetails(UUID)
+    case patternCreation
+}
 
-final class ModuleDeps {
-    let storage: PatternStorageProtocol
-    weak var container: ContainerViewController?
+
+struct GlobalBuilder {
+    private static let storage = StorageManager()
+    static func create(_ module: Router) -> RootViewController {
     
-    init(storage: PatternStorageProtocol, container: ContainerViewController?) {
-        self.storage = storage
-        self.container = container
+        switch module {
+        case .designPatterns:
+            let vc = DesignPatternsViewController()
+            let presenter = DesignPatternsPresenter(view: vc, storage: storage)
+            
+            vc.presenter = presenter
+            
+            return vc
+        case .favorite:
+            let vc = FavoriteViewController()
+            let presenter = FavoritePatternsPresenter(view: vc, storage: storage)
+            
+            vc.presenter = presenter
+            
+            return vc
+        case .patternDetails(let id):
+                let vc = PatternDetailsViewController()
+                let presenter = PatternDetailsPresenter(view: vc, storage: storage, objectID: id)
+                
+                vc.presenter = presenter
+                
+                return vc
+            
+        case .patternCreation:
+            let vc = PatternCreationViewController()
+            let presenter = PatternCreationPresenter(view: vc, storage: storage)
+            
+            vc.presenter = presenter
+            
+            return vc
+        }
+    
     }
 }
 
-enum GlobalBuilder {
-    static func designPatterns(_ deps: ModuleDeps) -> DesignPatternsViewController {
-        let vc = DesignPatternsViewController()
-        let presenter = DesignPatternsPresenter(view: vc, storage: deps.storage)
-        
-        vc.deps = deps
-        vc.container = deps.container
-        vc.presenter = presenter
-        
-        return vc
-    }
-    
-    static func favorite(_ deps: ModuleDeps) -> FavoriteViewController {
-        let vc = FavoriteViewController()
-        let presenter = FavoritePatternsPresenter(view: vc, storage: deps.storage)
-        
-        vc.deps = deps
-        vc.container = deps.container
-        vc.presenter = presenter
-        
-        return vc
-    }
-    
-    static func patternDetails(_ deps: ModuleDeps, id: UUID) -> PatternDetailsViewController {
-        let vc = PatternDetailsViewController()
-        let presenter = PatternDetailsPresenter(view: vc, storage: deps.storage, objectID: id)
-        
-        vc.presenter = presenter
-        
-        return vc
-    }
-    
-    static func patternCreation(_ deps: ModuleDeps) -> PatternCreationViewController {
-        let vc = PatternCreationViewController()
-        let presenter = PatternCreationPresenter(view: vc, storage: deps.storage)
-        
-        vc.presenter = presenter
-        
-        return vc   
-    }
-        
-    
-}

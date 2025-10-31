@@ -15,13 +15,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
-        let storage = StorageManager()
         let containerVC = ContainerViewController()
-        let deps = ModuleDeps(storage: storage, container: containerVC)
+       
         
-        containerVC.deps = deps
-        
-        let startVC = GlobalBuilder.designPatterns(deps)
+        let startVC = GlobalBuilder.create(.designPatterns) as! BaseContentViewController
+        startVC.containerDelegate = containerVC
+
        
         let navVC = UINavigationController(rootViewController: startVC)
         

@@ -11,9 +11,6 @@ import SnapKit
 
 final class ContainerViewController: RootViewController {
     
-    // MARK: - MVP Dependency Inversion
-    var deps: ModuleDeps!
-    
     // MARK: - Properties
     private var currentController: BaseContentViewController!
     private var sideMenuController: SideMenuViewController!
@@ -108,16 +105,16 @@ private extension ContainerViewController {
         case .oop:
             controller = OOPViewController()
         case .designPatterns:
-            controller = GlobalBuilder.designPatterns(deps)
+            controller = GlobalBuilder.create(.designPatterns) as! BaseContentViewController
         case .architecturalPatterns:
             controller = ArchitecturalPatternsViewController()
         case .solid:
             controller = SOLIDViewController()
         case .favorite:
-            controller = GlobalBuilder.favorite(deps)
+            controller = GlobalBuilder.create(.favorite) as! BaseContentViewController
         }
         
-        controller.container = self
+        controller.containerDelegate = self
         
         return controller
     }

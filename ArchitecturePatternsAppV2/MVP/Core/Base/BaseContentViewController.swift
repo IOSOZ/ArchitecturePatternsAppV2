@@ -9,9 +9,7 @@ import UIKit
 
 class BaseContentViewController: RootViewController {
     
-    // MARK: - MVP Dependency Inversion
-    var deps: ModuleDeps!
-    weak var container: ContainerViewController?    
+    weak var containerDelegate: ContainerDelegate?
     
     // MARK: - Life Cycle Methods
     override func viewDidLoad() {
@@ -35,8 +33,10 @@ class BaseContentViewController: RootViewController {
     }
     
     @objc private func didTapRightButton() {
-        if let isShown = container?.toggleSideMenu() {
+        if let isShown = containerDelegate?.toggleSideMenu() {
             rotateRightButton(isOpen: isShown)
+        } else {
+            print ("suqa")
         }
     }
 }
