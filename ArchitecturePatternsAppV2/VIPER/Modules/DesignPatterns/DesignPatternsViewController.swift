@@ -8,29 +8,28 @@
 import UIKit
 import SnapKit
 
-protocol DesignPatternsViewProtocol: AnyObject {
+protocol DesignPatternsInput: AnyObject {
     func refreshView()
-    func showPatternDetails(forID id: UUID)
-    func showPatternCreation()
+    func render(sections: [[Pattern]])
 }
 
 final class DesignPatternsViewController: BaseContentViewController {
+    // MARK: - VIPER
+    var presenter: DesignPatternsViewOutput!
     
     // MARK: - Properties
     private var tableView = UITableView()
-    
-    var presenter: DesignPatternsPresenter!
+    private var data: [[Pattern]] = []
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        presenter?.getData()
+        presenter.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        presenter?.getData()
     }
     
     @objc override func didTapLeftButton() {
@@ -81,11 +80,11 @@ private extension DesignPatternsViewController {
 // MARK: - UITableViewDataSource
 extension DesignPatternsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        presenter.patterns[section].count
+        data[section].count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        presenter.patterns.count
+        data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -93,7 +92,7 @@ extension DesignPatternsViewController: UITableViewDataSource {
     
         cell.delegate = self
         
-        let patternModel = presenter.patterns[indexPath.section][indexPath.row]
+        let patternModel = data[indexPath.section][indexPath.row]
         
         let isFirstCell = indexPath.row == 0 ? true : false
         
@@ -117,36 +116,32 @@ extension DesignPatternsViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        presenter.getPattern(at: indexPath)
+        presenter.didSelectRow(at: indexPath)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
-            self.presenter.deletePattern(at: indexPath)
+            self.presenter.didSwipeToDelete(at: indexPath)
         }
         
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }
 
-extension DesignPatternsViewController: DesignPatternsViewProtocol {
-    func showPatternCreation() {
-
-    }
-    
+extension DesignPatternsViewController: DesignPatternsInput {
     func refreshView() {
         tableView.reloadData()
     }
-
-    func showPatternDetails(forID id: UUID) {
-        let detailVC = GlobalBuilder.create(.patternDetails(id))
-        navigationController?.pushViewController(detailVC, animated: true)
+    
+    func render(sections: [[Pattern]]) {
+        data = sections
+        tableView.reloadData()
     }
 }
 
 extension DesignPatternsViewController: PatternTableViewCellDelegate {
     func didTapFavorite(on cell: PatternTableViewCell) {
-        guard let indexPath = tableView.indexPath(for: cell) else { return }
-        presenter.toggleFavoriteForPattern(at: indexPath)
+        cell.didTapFavoriteButton()
     }
 }
+

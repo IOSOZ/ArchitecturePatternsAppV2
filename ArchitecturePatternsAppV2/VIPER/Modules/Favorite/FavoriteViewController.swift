@@ -8,9 +8,8 @@
 import UIKit
 import SnapKit
 
-protocol FavoriteViewProtocol: AnyObject {
-    func refreshView()
-    func showPatternDetails(forID id: UUID)
+protocol FavoriteViewInput: AnyObject {
+    func render(rows: [Pattern])
 }
 
 final class FavoriteViewController: BaseContentViewController {
@@ -107,13 +106,8 @@ extension FavoriteViewController: UITableViewDelegate {
 }
 
 // MARK: - FavoriteView Protocol
-extension FavoriteViewController: FavoriteViewProtocol {
-    func refreshView() {
-        tableView.reloadData()
-    }
-    
-    func showPatternDetails(forID id: UUID) {
-        let detailVC = GlobalBuilder.create(.patternDetails(id))
-        navigationController?.pushViewController(detailVC, animated: true)
+extension FavoriteViewController: FavoriteViewInput {
+    func render(rows: [Pattern]) {
+        
     }
 }

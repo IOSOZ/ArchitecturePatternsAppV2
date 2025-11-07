@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Router {
+enum Module {
     case designPatterns
     case favorite
     case patternDetails(UUID)
@@ -17,16 +17,20 @@ enum Router {
 
 struct GlobalBuilder {
     private static let storage = StorageManager()
-    static func create(_ module: Router) -> RootViewController {
+    static func create(_ module: Module) -> RootViewController {
     
         switch module {
         case .designPatterns:
-            let vc = DesignPatternsViewController()
-            let presenter = DesignPatternsPresenter(view: vc, storage: storage)
+            let view = DesignPatternsViewController()
+            let interactor = DesignPatternInteractor(storage: StorageManager())
+            let router = DesignPatternRouter(viewController: view)
+            let presenter = DesignPatternsPresenter(view: view, interactor: interactor, router: router)
             
-            vc.presenter = presenter
             
-            return vc
+            view.presenter = presenter
+            
+            
+            return view
         case .favorite:
             let vc = FavoriteViewController()
             let presenter = FavoritePatternsPresenter(view: vc, storage: storage)
