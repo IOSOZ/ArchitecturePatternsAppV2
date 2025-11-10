@@ -12,3 +12,12 @@ protocol FavoriteRouterInput {
     func openPatternDetails(id: UUID)
     func performChangeBaseViewController()
 }
+
+final class FavoriteRouter: FavoriteRouterInput {
+    func openPatternDetails(id: UUID) {
+        
+    }
+    
+    func performChangeBaseViewController() {
+    }
+}

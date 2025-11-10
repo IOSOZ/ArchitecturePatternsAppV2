@@ -34,7 +34,6 @@ final class DesignPatternInteractor: DesignPatternInteractorInput {
         guard var pattern = storage.getPatternByID(id) else { return }
         pattern.isFavorite.toggle()
         storage.updatePattern(pattern)
-            
     }
     
     func deletePattern(for id: UUID) {

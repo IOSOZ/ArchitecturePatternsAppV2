@@ -33,18 +33,17 @@ struct GlobalBuilder {
             return view
         case .favorite:
             let vc = FavoriteViewController()
-            let presenter = FavoritePatternsPresenter(view: vc, storage: storage)
-            
-            vc.presenter = presenter
             
             return vc
         case .patternDetails(let id):
-                let vc = PatternDetailsViewController()
-                let presenter = PatternDetailsPresenter(view: vc, storage: storage, objectID: id)
-                
-                vc.presenter = presenter
-                
-                return vc
+            let view = PatternDetailsViewController()
+            let interactor = PatternDetailsInteractor(storage: StorageManager())
+            let router = PatternDetailsRouter(viewController: view)
+            let presenter = PatternDetailsPresenter(view: view, router: router, interactor: interactor, patternID: id)
+            
+            view.presenter = presenter
+            
+            return view
             
         case .patternCreation:
             let vc = PatternCreationViewController()

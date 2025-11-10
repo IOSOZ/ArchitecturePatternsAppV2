@@ -9,9 +9,9 @@ import PhotosUI
 import UIKit
 import SnapKit
 
-protocol PatternDetailsViewProtocol: AnyObject {
-    func displayFieldsWith(pattern: Pattern)
-    func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)?
+protocol PatternDetailsViewInput: AnyObject {
+    func display(viewModel: PatternDetailsViewModel)
+    func getEditedFields() -> (name: String, description: String?)?
 }
 
 final class PatternDetailsViewController: RootViewController {
@@ -31,72 +31,38 @@ final class PatternDetailsViewController: RootViewController {
     private var selectedType: PatternType = .creational
     
     // MARK: - MVP
-    var presenter: PatternDetailsPresenterProtocol!
+    var presenter: PatternDetailsViewOutput!
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        presenter.getData()
+        presenter.viewDidLoad()
     }
     
     // MARK: - Objc methods
     @objc func didTapRightBarButton() {
         toggleEditMode()
-        
-        if isEditingMode {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(
-                barButtonSystemItem: .cancel,
-                target: self,
-                action: #selector(cancelEditing)
-            )
-            editButton.image = UIImage(resource: .done)
-        } else {
-            navigationItem.leftBarButtonItem = nil
-            presenter.savePatternChanges()
-            editButton.image = UIImage(resource: .editMode)
+        if isEditingMode == false {
+            presenter.didTapSave()
         }
     }
     
     @objc func cancelEditing() {
-        navigationItem.leftBarButtonItem = nil
-        editButton.image = UIImage(resource: .editMode)
-        presenter.getData()
         toggleEditMode()
+        presenter.didTapCancel()
     }
     
     @objc func choosePatternTypeButtonTapped() {
-        let bottomVC = BottomSheetViewController(selectedType: selectedType)
-        bottomVC.delegate = self
-        present(bottomVC, animated: true)
+        presenter.didTapChooseType()
     }
     
-    @objc func choosePhoto() {
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let photo = UIAlertAction(title: "Фото", style: .default) { _ in
-            self.openPhotoGallery()
-        }
-        let file = UIAlertAction(title: "Файлы", style: .destructive) { _ in
-            // TODO Работа с файлами
-        }
-        
-        let cancel = UIAlertAction(title: "Отмена", style: .cancel)
-        
-        actionSheet.addAction(photo)
-        actionSheet.addAction(file)
-        actionSheet.addAction(cancel)
-        
-        present(actionSheet, animated: true)
+    @objc func didTapChoosePhotoButton() {
+        presenter.didTapChangeImage()
     }
-    
-
     
     @objc func patternImageDidTap() {
-        guard let image = patternImage.image else {return}
-        
-        let viewer = ImageViewerViewController(image: image)
-        
-        navigationController?.pushViewController(viewer, animated: true)
+        presenter.didTapOpenViewer()
     }
 }
 
@@ -122,13 +88,12 @@ private extension PatternDetailsViewController {
             action: #selector(didTapRightBarButton)
         )
         navigationItem.rightBarButtonItem = editButton
-//        navigationItem.title = object.name
     }
     
     // MARK: - Setup UI
     func setupUI() {
         editPhotoButton.setTitle("Выбрать изображение", for: .normal)
-        editPhotoButton.addTarget(self, action: #selector(choosePhoto), for: .touchUpInside)
+        editPhotoButton.addTarget(self, action: #selector(didTapChoosePhotoButton), for: .touchUpInside)
         editPhotoButton.isHidden = true
         
         patternImage.layer.borderWidth = 1
@@ -137,7 +102,6 @@ private extension PatternDetailsViewController {
         patternImage.clipsToBounds = true
         
         patternName.font = UIFont(name: "SFPro-Semibold", size: 32)
-//        patternName.text = object.name
         patternName.isEnabled = false
         patternName.rightView = UIImageView(image: UIImage(resource: .pencil))
         patternName.rightViewMode = .always
@@ -222,16 +186,16 @@ private extension PatternDetailsViewController {
         }
     }
     
-    // MARK: - Open Photo Gallery
-    func openPhotoGallery() {
-        var config = PHPickerConfiguration(photoLibrary: .shared())
-        config.filter = .images
-        config.selectionLimit = 1
-        
-        let picker = PHPickerViewController(configuration: config)
-        picker.delegate = self
-        present(picker, animated: true)
-    }
+//    // MARK: - Open Photo Gallery
+//    func openPhotoGallery() {
+//        var config = PHPickerConfiguration(photoLibrary: .shared())
+//        config.filter = .images
+//        config.selectionLimit = 1
+//        
+//        let picker = PHPickerViewController(configuration: config)
+//        picker.delegate = self
+//        present(picker, animated: true)
+//    }
     
     // MARK: - Toggle Edit Mode
     func toggleEditMode() {
@@ -246,6 +210,11 @@ private extension PatternDetailsViewController {
         self.patternDescription.layer.borderWidth = self.isEditingMode ? 1 : 0
         self.patternName.layer.borderWidth = self.isEditingMode ? 1 : 0
         self.editButton.image = UIImage(resource: self.isEditingMode ? .done : .editMode)
+        navigationItem.leftBarButtonItem = isEditingMode ?  UIBarButtonItem(
+            barButtonSystemItem: .cancel,
+            target: self,
+            action: #selector(cancelEditing)
+        ) : nil
     }
 }
 
@@ -258,43 +227,45 @@ extension PatternDetailsViewController: PHPickerViewControllerDelegate {
         
         if provider.canLoadObject(ofClass: UIImage.self) {
             provider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
+                guard let image = image as? UIImage, let data = image.pngData() else { return }
                 DispatchQueue.main.async {
-                    self?.patternImage.image = image as? UIImage
+                    self?.presenter.didPickImage(data: data)
                 }
             }
         }
     }
 }
 
-extension PatternDetailsViewController: PatternDetailsViewProtocol {
-    func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)? {
+extension PatternDetailsViewController: PatternDetailsViewInput {
+    
+    func getEditedFields() -> (name: String, description: String?)? {
         let name = (patternName.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else { return nil }
         
         return (
             name: name,
             description: patternDescription.text,
-            image: patternImage.image,
-            type: selectedType
         )
     }
     
-    func displayFieldsWith(pattern: Pattern) {
-        navigationItem.title = pattern.name
-        patternImage.image = pattern.image
-        patternName.text = pattern.name
-        patternDescription.text = pattern.description
-        selectedType = pattern.type
-        patternTypeLabel.text = "Тип: \(selectedType.title)"
+    func display(viewModel: PatternDetailsViewModel) {
+        navigationItem.title = viewModel.name
+        patternName.text = viewModel.name
+        patternDescription.text = viewModel.description
+        patternTypeLabel.text = "Тип: \(viewModel.typeTitle)"
+        
+        if let data = viewModel.imageData {
+            patternImage.image = UIImage(data: data)
+        } else {
+            patternImage.image = UIImage(resource: .no)
+        }
     }
 }
 
 // MARK: - PatternDetailsViewControllerDelegate
 extension PatternDetailsViewController: BottomSheetDelegate {
     func updatePatternType(_ patternType: PatternType) {
-        selectedType = patternType
-        patternTypeLabel.text = "Тип: \(patternType.title)"
-
+        presenter.didChoose(type: patternType)
     }
 }
 

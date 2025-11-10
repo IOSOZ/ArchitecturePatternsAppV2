@@ -30,6 +30,8 @@ final class DesignPatternsViewController: BaseContentViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        #warning("Бредик исправить")
+        presenter.viewDidLoad()
     }
     
     @objc override func didTapLeftButton() {

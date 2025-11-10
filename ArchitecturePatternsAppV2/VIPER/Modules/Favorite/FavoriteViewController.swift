@@ -81,17 +81,18 @@ private extension FavoriteViewController {
 // MARK: - UITableViewDataSource
 extension FavoriteViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        presenter.patterns.count
+        2
+//        presenter.patterns.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PatternTableViewCell.identifier, for: indexPath) as? PatternTableViewCell else { return UITableViewCell() }
         
-        let patternModel = presenter.patterns[indexPath.row]
+//        let patternModel = presenter.patterns[indexPath.row]
         
         let isFirstCell = indexPath.row == 0 ? true : false
         
-        cell.configure(with: patternModel, isFirstCell: isFirstCell)
+//        cell.configure(with: patternModel, isFirstCell: isFirstCell)
         
         return cell
     }

@@ -24,7 +24,8 @@ final class DesignPatternRouter: DesignPatternRouterInput {
     }
     
     func openPatternDetails(id: UUID) {
-        
+        let vc = GlobalBuilder.create(.patternDetails(id))
+        viewController?.navigationController?.pushViewController(vc, animated: true)
     }
     
     func performChangeBaseViewController() {

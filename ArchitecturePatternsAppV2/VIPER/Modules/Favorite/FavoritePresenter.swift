@@ -13,6 +13,16 @@ protocol FavoritePresenterProtocol: AnyObject {
 }
 
 final class FavoritePatternsPresenter: FavoritePresenterProtocol {
+    
+    
+    func getData() {
+        
+    }
+    
+    func getPattern(at indexPath: IndexPath) {
+        
+    }
+    
  
     
     
