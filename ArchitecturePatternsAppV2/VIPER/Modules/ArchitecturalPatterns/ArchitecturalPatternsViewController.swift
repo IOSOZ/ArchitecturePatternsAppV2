@@ -33,6 +33,7 @@ private extension ArchitecturalPatternsViewController {
     
     // MARK: - Setup UI
     func setupUI() {
+        self.navigationItem.leftBarButtonItem = nil
         view.backgroundColor = .white
         title = "Архитектурные паттерны"
         

@@ -1,27 +1,28 @@
 //
-//  PatternDetailsRouter.swift
+//  PatternCreationRouter.swift
 //  ArchitecturePatternsAppV2
 //
-//  Created by Олег Зуев on 07.11.2025.
+//  Created by Олег Зуев on 10.11.2025.
 //
 
 import Foundation
 import UIKit
 import PhotosUI
 
-protocol PatternDetailsRouterInput {
+protocol PatternCreationRouterInput: AnyObject {
     func close()
-    func showBottomSheet(selectedType: PatternType)
+    func showBottomSheet()
     func showImageSourceAlert()
     func showImagePicker()
-    func showImageViewer(with data: Data)
+    func showCreationErrorAlert()
 }
 
-final class PatternDetailsRouter: PatternDetailsRouterInput {
-   
+
+final class PatternCreationRouter: PatternCreationRouterInput {
+    
     weak var viewController: UIViewController?
     
-    init(viewController: UIViewController?) {
+    init(viewController: UIViewController) {
         self.viewController = viewController
     }
     
@@ -29,8 +30,8 @@ final class PatternDetailsRouter: PatternDetailsRouterInput {
         viewController?.navigationController?.popViewController(animated: true)
     }
     
-    func showBottomSheet(selectedType: PatternType) {
-        let bottomSheet = BottomSheetViewController(selectedType: selectedType)
+    func showBottomSheet() {
+        let bottomSheet = BottomSheetViewController(selectedType: nil)
         bottomSheet.delegate = viewController as? BottomSheetDelegate
         viewController?.present(bottomSheet, animated: true)
     }
@@ -63,10 +64,16 @@ final class PatternDetailsRouter: PatternDetailsRouterInput {
         viewController?.present(picker, animated: true)
     }
     
-    func showImageViewer(with data: Data) {
-        guard let image = UIImage(data: data) else {return}
-        let viewer = ImageViewerViewController(image: image)
+    func showCreationErrorAlert() {
+        let alert = UIAlertController(
+            title: "Заполните поля",
+            message: "Внесите имя и выберете тип паттерна",
+            preferredStyle: .alert
+        )
         
-        viewController?.navigationController?.pushViewController(viewer, animated: true)
+        let okButton = UIAlertAction(title: "ОК", style: .default)
+        alert.addAction(okButton)
+        viewController?.present(alert, animated: true)
     }
+    
 }

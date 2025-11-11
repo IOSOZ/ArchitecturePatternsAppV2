@@ -8,6 +8,10 @@
 import UIKit
 import SnapKit
 
+protocol ContainerDelegate: AnyObject {
+    func performControllerChange(with menuItem: MenuItem)
+    func toggleSideMenu()
+}
 
 final class ContainerViewController: RootViewController {
     
@@ -139,9 +143,8 @@ extension ContainerViewController: ContainerDelegate {
     }
     
     // MARK: - Toggle Side Menu
-    func toggleSideMenu() -> Bool {
+    func toggleSideMenu() {
         sideMenuIsShow.toggle()
         showSideMenu(shouldMove: sideMenuIsShow)
-        return sideMenuIsShow
     }
 }

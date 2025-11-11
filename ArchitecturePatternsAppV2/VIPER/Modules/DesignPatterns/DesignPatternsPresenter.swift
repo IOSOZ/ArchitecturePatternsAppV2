@@ -8,12 +8,13 @@
 import Foundation
 
 protocol DesignPatternsViewOutput: AnyObject  {
-    func viewDidLoad()
-    func didSelectRow(at indexPath: IndexPath)
-    func didSwipeToDelete(at indexPath: IndexPath)
-    func didTapFavorite(at indexPath: IndexPath)
-    func didTapAddNew()
-    func didTapSideMenu()
+    func viewIsReady()
+    func viewWillShow()
+    func userDidSelectRow(at indexPath: IndexPath)
+    func userDidSwipeToDelete(at indexPath: IndexPath)
+    func userDidTapFavorite(at indexPath: IndexPath)
+    func userDidTapAddNew()
+    func userDidTapSideMenu()
 }
 
 final class DesignPatternsPresenter: DesignPatternsViewOutput {
@@ -30,38 +31,43 @@ final class DesignPatternsPresenter: DesignPatternsViewOutput {
         self.router = router
     }
     
-    func viewDidLoad() {
+    func viewIsReady() {
         sections = interactor.fetchPatterns()
         view?.render(sections: sections)
     }
     
-    func didSelectRow(at indexPath: IndexPath) {
+    func viewWillShow() {
+        view?.render(sections: sections)
+    }
+    
+    func userDidSelectRow(at indexPath: IndexPath) {
         guard let id = interactor.getPatternId(at: indexPath) else { return }
         interactor.incrementViewCount(for: id)
+        sections = interactor.fetchPatterns()
         view?.refreshView()
         router.openPatternDetails(id: id)
     }
     
-    func didSwipeToDelete(at indexPath: IndexPath) {
+    func userDidSwipeToDelete(at indexPath: IndexPath) {
         guard let id = interactor.getPatternId(at: indexPath) else { return }
         interactor.deletePattern(for: id)
         sections = interactor.fetchPatterns()
         view?.render(sections: sections)
     }
     
-    func didTapFavorite(at indexPath: IndexPath) {
+    func userDidTapFavorite(at indexPath: IndexPath) {
         guard let id = interactor.getPatternId(at: indexPath) else { return }
         interactor.toggleFavorite(for: id)
         sections = interactor.fetchPatterns()
         view?.render(sections: sections)
     }
     
-    func didTapAddNew() {
+    func userDidTapAddNew() {
         router.openCreationMenu()
     }
     
-    func didTapSideMenu() {
-
+    func userDidTapSideMenu() {
+        router.toggleSideMenu()
     }
     
     

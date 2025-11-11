@@ -40,7 +40,6 @@ final class DesignPatternInteractor: DesignPatternInteractorInput {
         if let pattern = storage.getPatternByID(id) {
             storage.removePattern(pattern)
         }
-            
     }
     
     func incrementViewCount(for id: UUID) {

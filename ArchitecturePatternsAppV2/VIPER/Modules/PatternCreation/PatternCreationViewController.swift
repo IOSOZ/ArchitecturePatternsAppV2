@@ -8,7 +8,7 @@
 import UIKit
 import PhotosUI
 
-protocol PatternCreationViewProtocol {
+protocol PatternCreationViewInput: AnyObject {
     func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)?
 }
 
@@ -30,7 +30,7 @@ final class PatternCreationViewController: RootViewController {
     private var selectedType: PatternType?
     
     // MARK: - MVP
-    var presenter: PatternCreationPresenterProtocol!
+    var presenter: PatternCreationViewOutput!
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
@@ -40,36 +40,20 @@ final class PatternCreationViewController: RootViewController {
     
     // MARK: - Objc methods
     @objc func didTapRightBarButton() {
-        presenter.createPattern()
+        presenter.didTapSave()
     }
     
     @objc func cancelEditing() {
-        navigationController?.popViewController(animated: true)
+        presenter.didTapCancel()
     }
     
     
     @objc func choosePatternTypeButtonTapped() {
-        let bottomVC = BottomSheetViewController(selectedType: selectedType)
-        bottomVC.delegate = self
-        present(bottomVC, animated: true,)
+        presenter.didTapChooseType()
     }
     
     @objc func choosePhoto() {
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let photo = UIAlertAction(title: "Фото", style: .default) { _ in
-            self.openPhotoGallery()
-        }
-        let file = UIAlertAction(title: "Файлы", style: .destructive) { _ in
-            // TODO Работа с файлами
-        }
-        
-        let cancel = UIAlertAction(title: "Отмена", style: .cancel)
-        
-        actionSheet.addAction(photo)
-        actionSheet.addAction(file)
-        actionSheet.addAction(cancel)
-        
-        present(actionSheet, animated: true)
+        presenter.didTapChangeImage()
     }
 }
 
@@ -248,7 +232,7 @@ extension PatternCreationViewController: UITextFieldDelegate {
 }
 
 // MARK: - PatternCreationView Protocol
-extension PatternCreationViewController: PatternCreationViewProtocol {
+extension PatternCreationViewController: PatternCreationViewInput {
     func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)? {
         if let type = selectedType, let name = patternNameTextField.text {
             navigationController?.popViewController(animated: true)
@@ -259,16 +243,7 @@ extension PatternCreationViewController: PatternCreationViewProtocol {
                 type: type
             )
         } else {
-            let alert = UIAlertController(
-                title: "Заполните поля",
-                message: "Внесите имя и выберете тип паттерна",
-                preferredStyle: .alert
-            )
-            
-            let okButton = UIAlertAction(title: "ОК", style: .default)
-            alert.addAction(okButton)
-            present(alert, animated: true)
-            
+            presenter.creationError()
             return nil
         }
     }

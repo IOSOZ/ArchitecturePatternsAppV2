@@ -28,41 +28,40 @@ final class PatternDetailsViewController: RootViewController {
     
     // MARK: - State
     private var isEditingMode = false
-    private var selectedType: PatternType = .creational
-    
-    // MARK: - MVP
+
+    // MARK: - VIPER
     var presenter: PatternDetailsViewOutput!
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        presenter.viewDidLoad()
+        presenter.viewIsReady()
     }
     
     // MARK: - Objc methods
     @objc func didTapRightBarButton() {
         toggleEditMode()
         if isEditingMode == false {
-            presenter.didTapSave()
+            presenter.userDidTapSave()
         }
     }
     
     @objc func cancelEditing() {
         toggleEditMode()
-        presenter.didTapCancel()
+        presenter.userDidTapCancel()
     }
     
     @objc func choosePatternTypeButtonTapped() {
-        presenter.didTapChooseType()
+        presenter.userDidTapChooseType()
     }
     
     @objc func didTapChoosePhotoButton() {
-        presenter.didTapChangeImage()
+        presenter.userDidTapChangeImage()
     }
     
     @objc func patternImageDidTap() {
-        presenter.didTapOpenViewer()
+        presenter.userDidTapOpenViewer()
     }
 }
 
@@ -229,7 +228,7 @@ extension PatternDetailsViewController: PHPickerViewControllerDelegate {
             provider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
                 guard let image = image as? UIImage, let data = image.pngData() else { return }
                 DispatchQueue.main.async {
-                    self?.presenter.didPickImage(data: data)
+                    self?.presenter.userDidPickImage(data: data)
                 }
             }
         }
@@ -265,7 +264,7 @@ extension PatternDetailsViewController: PatternDetailsViewInput {
 // MARK: - PatternDetailsViewControllerDelegate
 extension PatternDetailsViewController: BottomSheetDelegate {
     func updatePatternType(_ patternType: PatternType) {
-        presenter.didChoose(type: patternType)
+        presenter.userDidChoose(type: patternType)
     }
 }
 

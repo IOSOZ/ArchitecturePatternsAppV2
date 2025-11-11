@@ -9,15 +9,14 @@ import Foundation
 import UIKit
 
 protocol PatternDetailsViewOutput: AnyObject {
-    func viewDidLoad()
-    func didTapSave()
-    func didTapCancel()
-    func didTapChooseType()
-    func didChoose(type: PatternType)
-    func didTapChangeImage()
-    func didPickImage(data: Data)
-    func didTapOpenViewer()
-
+    func viewIsReady()
+    func userDidTapSave()
+    func userDidTapCancel()
+    func userDidTapChooseType()
+    func userDidChoose(type: PatternType)
+    func userDidTapChangeImage()
+    func userDidPickImage(data: Data)
+    func userDidTapOpenViewer()
 }
 
 class PatternDetailsPresenter: PatternDetailsViewOutput {
@@ -38,7 +37,7 @@ class PatternDetailsPresenter: PatternDetailsViewOutput {
         self.patternID = patternID
     }
     
-    func viewDidLoad() {
+    func viewIsReady() {
         guard let entity = interactor.getPattern(with: patternID) else { return }
         original = entity
         draft = PatternDraft(
@@ -52,7 +51,7 @@ class PatternDetailsPresenter: PatternDetailsViewOutput {
         pushDraftToView()
     }
     
-    func didTapSave() {
+    func userDidTapSave() {
         if let fields = view?.getEditedFields() {
             draft.name = fields.name
             draft.description = fields.description
@@ -74,7 +73,7 @@ class PatternDetailsPresenter: PatternDetailsViewOutput {
         pushDraftToView()
     }
     
-    func didTapCancel() {
+    func userDidTapCancel() {
         draft = PatternDraft(
             id: original.id,
             name: original.name,
@@ -86,25 +85,25 @@ class PatternDetailsPresenter: PatternDetailsViewOutput {
         pushDraftToView()
     }
     
-    func didTapChooseType() {
+    func userDidTapChooseType() {
         router.showBottomSheet(selectedType: draft.type)
     }
     
-    func didChoose(type: PatternType) {
+    func userDidChoose(type: PatternType) {
         draft.type = type
         pushDraftToView()
     }
     
-    func didTapChangeImage() {
+    func userDidTapChangeImage() {
         router.showImageSourceAlert()
     }
     
-    func didPickImage(data: Data) {
+    func userDidPickImage(data: Data) {
         draft.imageData = data
         pushDraftToView()
     }
     
-    func didTapOpenViewer() {
+    func userDidTapOpenViewer() {
         guard let data = draft.imageData else { return }
         router.showImageViewer(with: data)
     }

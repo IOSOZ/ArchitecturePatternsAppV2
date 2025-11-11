@@ -32,6 +32,7 @@ private extension SOLIDViewController {
     
     // MARK: - Setup UI
     func setupUI() {
+        self.navigationItem.leftBarButtonItem = nil
         view.backgroundColor = .white
         title = "Принципы SOLID"
         

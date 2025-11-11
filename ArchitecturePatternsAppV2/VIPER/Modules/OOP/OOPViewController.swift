@@ -33,6 +33,7 @@ private extension OOPViewController {
     // MARK: - Setup UI
     func setupUI() {
         view.backgroundColor = .white
+        self.navigationItem.leftBarButtonItem = nil
         title = "Принципы ООП"
         
         textLabel.font = UIFont(name: "SFPro-Regular", size: 20)

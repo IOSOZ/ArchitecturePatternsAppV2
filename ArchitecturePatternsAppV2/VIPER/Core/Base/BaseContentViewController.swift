@@ -32,12 +32,7 @@ class BaseContentViewController: RootViewController {
     @objc func didTapLeftButton() {
     }
     
-    @objc private func didTapRightButton() {
-        if let isShown = containerDelegate?.toggleSideMenu() {
-            rotateRightButton(isOpen: isShown)
-        } else {
-            print ("suqa")
-        }
+    @objc func didTapRightButton() {
     }
 }
 

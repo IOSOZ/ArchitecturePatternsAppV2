@@ -25,20 +25,24 @@ final class DesignPatternsViewController: BaseContentViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        presenter.viewDidLoad()
+        presenter.viewIsReady()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        #warning("Бредик исправить")
-        presenter.viewDidLoad()
+        presenter.viewWillShow()
     }
     
     @objc override func didTapLeftButton() {
-    
         let patternCreationVC = GlobalBuilder.create(.patternCreation)
         navigationController?.pushViewController(patternCreationVC, animated: true)
     }
+    
+    @objc override func didTapRightButton() {
+        super.didTapRightButton()
+        presenter.userDidTapSideMenu()
+    }
+    
 }
 
 // MARK: - Private Methods
@@ -118,12 +122,12 @@ extension DesignPatternsViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        presenter.didSelectRow(at: indexPath)
+        presenter.userDidSelectRow(at: indexPath)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
-            self.presenter.didSwipeToDelete(at: indexPath)
+            self.presenter.userDidSwipeToDelete(at: indexPath)
         }
         
         return UISwipeActionsConfiguration(actions: [deleteAction])
@@ -143,7 +147,8 @@ extension DesignPatternsViewController: DesignPatternsInput {
 
 extension DesignPatternsViewController: PatternTableViewCellDelegate {
     func didTapFavorite(on cell: PatternTableViewCell) {
-        cell.didTapFavoriteButton()
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        presenter.userDidTapFavorite(at: indexPath)
     }
 }
 
