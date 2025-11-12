@@ -16,20 +16,25 @@ final class FavoriteViewController: BaseContentViewController {
     
     // MARK: - Properties
     private var tableView = UITableView()
+    private var data: [Pattern] = []
     
     // MARK: - MVP
-    var presenter: FavoritePatternsPresenter!
+    var presenter: FavoriteViewOutput!
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        presenter.getData()
+        presenter.viewIsReady()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        presenter.getData()
+        presenter.viewIsReady()
+    }
+    
+    @objc override func didTapRightButton() {
+        presenter.userDidTapSideMenu()
     }
 }
 
@@ -81,18 +86,17 @@ private extension FavoriteViewController {
 // MARK: - UITableViewDataSource
 extension FavoriteViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
-//        presenter.patterns.count
+        data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PatternTableViewCell.identifier, for: indexPath) as? PatternTableViewCell else { return UITableViewCell() }
         
-//        let patternModel = presenter.patterns[indexPath.row]
+        let patternModel = data[indexPath.row]
         
         let isFirstCell = indexPath.row == 0 ? true : false
         
-//        cell.configure(with: patternModel, isFirstCell: isFirstCell)
+       cell.configure(with: patternModel, isFirstCell: isFirstCell)
         
         return cell
     }
@@ -101,14 +105,14 @@ extension FavoriteViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension FavoriteViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        presenter.getPattern(at: indexPath)
-        
+        presenter.userDidSelectRow(at: indexPath)
     }
 }
 
 // MARK: - FavoriteView Protocol
 extension FavoriteViewController: FavoriteViewInput {
     func render(rows: [Pattern]) {
-        
+        data = rows
+        tableView.reloadData()
     }
 }

@@ -16,15 +16,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let containerVC = ContainerViewController()
-       
+        let storage = StorageManager()
         
-        let startVC = GlobalBuilder.create(.designPatterns) as! BaseContentViewController
-        startVC.containerDelegate = containerVC
+        GlobalBuilder.configure(storage: storage, container: containerVC)
+        
+        let sideMenu = GlobalBuilder.create(.sideMenu)
+        let startVC = GlobalBuilder.create(.designPatterns)
 
-       
         let navVC = UINavigationController(rootViewController: startVC)
         
-        containerVC.embedd(navVC)
+        containerVC.embedd(navVC, sideMenu)
         
         self.window = UIWindow(windowScene: windowScene)
         self.window?.rootViewController = containerVC

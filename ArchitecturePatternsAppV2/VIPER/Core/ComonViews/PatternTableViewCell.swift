@@ -8,6 +8,10 @@
 import UIKit
 import SnapKit
 
+protocol PatternTableViewCellDelegate: AnyObject {
+    func didTapFavorite(on cell: PatternTableViewCell)
+}
+
 final class PatternTableViewCell: UITableViewCell {
     // MARK: - Public Properties
     static var identifier: String {

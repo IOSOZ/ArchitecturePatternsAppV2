@@ -8,6 +8,10 @@
 import UIKit
 import SnapKit
 
+protocol BottomSheetDelegate: AnyObject {
+    func updatePatternType(_ patternType: PatternType)
+}
+
 final class BottomSheetViewController: RootViewController {
     
     // MARK: - UI Properties

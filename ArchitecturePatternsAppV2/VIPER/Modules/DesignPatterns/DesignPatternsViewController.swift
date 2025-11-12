@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 
 protocol DesignPatternsInput: AnyObject {
-    func refreshView()
     func render(sections: [[Pattern]])
 }
 
@@ -39,7 +38,6 @@ final class DesignPatternsViewController: BaseContentViewController {
     }
     
     @objc override func didTapRightButton() {
-        super.didTapRightButton()
         presenter.userDidTapSideMenu()
     }
     
@@ -135,10 +133,6 @@ extension DesignPatternsViewController: UITableViewDelegate {
 }
 
 extension DesignPatternsViewController: DesignPatternsInput {
-    func refreshView() {
-        tableView.reloadData()
-    }
-    
     func render(sections: [[Pattern]]) {
         data = sections
         tableView.reloadData()

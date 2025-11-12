@@ -12,14 +12,12 @@ protocol DesignPatternRouterInput {
     func openPatternDetails(id: UUID)
     func openCreationMenu()
     func toggleSideMenu()
-    func performChangeBaseViewController()
-    
 }
 
 
 final class DesignPatternRouter: DesignPatternRouterInput {
    
-    weak var container: ContainerDelegate?
+    weak var container: ContainerRouting?
     private weak var viewController: UIViewController?
     
     init(viewController: UIViewController?) {
@@ -32,13 +30,8 @@ final class DesignPatternRouter: DesignPatternRouterInput {
     }
     
     func toggleSideMenu() {
-        container?.toggleSideMenu()
+        container?.toggleSideMenu(nil)
     }
-    
-    func performChangeBaseViewController() {
-        
-    }
-    
     
     func openCreationMenu() {
         let vc = GlobalBuilder.create(.patternCreation)

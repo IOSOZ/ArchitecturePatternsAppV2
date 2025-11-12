@@ -13,10 +13,16 @@ class OOPViewController: BaseContentViewController {
     let technicalWorkImage = UIImageView(image: UIImage(resource: .technicalWork))
     let textLabel = UILabel()
     
+    var presenter: EmptyPresenter!
+    
     // MARK: - Life Cycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+    }
+    
+    @objc override func didTapRightButton() {
+        presenter.userDidTapSideMenu()
     }
 }
     
@@ -29,6 +35,8 @@ private extension OOPViewController {
         addViews()
         setupConstraints()
     }
+    
+    
     
     // MARK: - Setup UI
     func setupUI() {
@@ -61,3 +69,6 @@ private extension OOPViewController {
         }
     }
 }
+
+
+extension OOPViewController: EmptyViewInput { }

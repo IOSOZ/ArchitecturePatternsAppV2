@@ -9,8 +9,6 @@ import UIKit
 
 class BaseContentViewController: RootViewController {
     
-    weak var containerDelegate: ContainerDelegate?
-    
     // MARK: - Life Cycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,3 +65,5 @@ private extension BaseContentViewController {
         return UIBarButtonItem(customView: customButton)
     }
 }
+
+

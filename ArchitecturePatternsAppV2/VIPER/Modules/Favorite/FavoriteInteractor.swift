@@ -11,6 +11,7 @@ import Foundation
 protocol FavoriteInteractorInput {
     func fetchFavoritePatterns() -> [Pattern]
     func getPatternId(at indexPath: IndexPath) -> UUID?
+    func incrementViewCount(for id: UUID)
 }
 
 final class FavoriteInteractor: FavoriteInteractorInput {
@@ -28,5 +29,10 @@ final class FavoriteInteractor: FavoriteInteractorInput {
     func getPatternId(at indexPath: IndexPath) -> UUID? {
         guard patterns.indices.contains(indexPath.row) else { return nil}
         return patterns[indexPath.row].id
+    }
+    
+    func incrementViewCount(for id: UUID) {
+        guard let pattern = storage.getPatternByID(id) else { return }
+        storage.incrementViewCounterFor(pattern: pattern)
     }
 }

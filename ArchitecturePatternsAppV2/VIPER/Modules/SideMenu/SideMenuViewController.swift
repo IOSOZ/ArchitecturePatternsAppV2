@@ -16,6 +16,10 @@ enum MenuItem {
     case favorite
 }
 
+protocol SideMenuViewInput: AnyObject {
+    // Только для возможности прокинуть другое меню в презентер
+}
+
 final class SideMenuViewController: RootViewController {
 
     // MARK: - UI Properties
@@ -27,7 +31,8 @@ final class SideMenuViewController: RootViewController {
 
     private var buttonVerticalStack = UIStackView()
     
-    weak var deleagate: ContainerDelegate?
+    var presenter: SideMenuViewOutput?
+
 
     // MARK: - Life cycle methods
     override func viewDidLoad() {
@@ -46,7 +51,7 @@ final class SideMenuViewController: RootViewController {
         case favoriteButton: item = .favorite
         default: return
         }
-        deleagate?.performControllerChange(with: item)
+        presenter?.userDidChoseModule(item)
     }
 }
 
@@ -117,4 +122,8 @@ private extension SideMenuViewController {
         SOLIDButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
         favoriteButton.addTarget(self, action: #selector(didTapSideMenuButton), for: .touchUpInside)
     }
+}
+
+extension SideMenuViewController: SideMenuViewInput {
+    
 }

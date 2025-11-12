@@ -37,6 +37,7 @@ final class DesignPatternsPresenter: DesignPatternsViewOutput {
     }
     
     func viewWillShow() {
+        sections = interactor.fetchPatterns()
         view?.render(sections: sections)
     }
     
@@ -44,7 +45,7 @@ final class DesignPatternsPresenter: DesignPatternsViewOutput {
         guard let id = interactor.getPatternId(at: indexPath) else { return }
         interactor.incrementViewCount(for: id)
         sections = interactor.fetchPatterns()
-        view?.refreshView()
+        view?.render(sections: sections)
         router.openPatternDetails(id: id)
     }
     

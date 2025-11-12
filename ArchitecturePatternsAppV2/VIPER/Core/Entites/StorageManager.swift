@@ -7,6 +7,17 @@
 
 import Foundation
 
+protocol PatternStorageProtocol {
+    func getAllPatterns() -> [[Pattern]]
+    func getPatternFor(indexPath: IndexPath) -> Pattern
+    func getFavoritePatterns() -> [Pattern]
+    func addNewPattern(_ pattern: Pattern)
+    func updatePattern(_ pattern: Pattern)
+    func incrementViewCounterFor(pattern : Pattern)
+    func getPatternByID(_ id: UUID) -> Pattern?
+    func removePattern(_ pattern: Pattern )
+}
+
 final class StorageManager: PatternStorageProtocol {
     
     private let dataStore: DataStore

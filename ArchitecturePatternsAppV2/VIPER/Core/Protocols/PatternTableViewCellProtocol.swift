@@ -7,6 +7,4 @@
 
 import Foundation
 
-protocol PatternTableViewCellDelegate: AnyObject {
-    func didTapFavorite(on cell: PatternTableViewCell)
-}
+

@@ -7,23 +7,43 @@
 
 import Foundation
 
-protocol FavoritePresenterProtocol: AnyObject {
-    func getData()
-    func getPattern(at indexPath: IndexPath)
+protocol FavoriteViewOutput: AnyObject {
+    func viewIsReady()
+    func userDidSelectRow(at indexPath: IndexPath)
+    func userDidTapSideMenu()
 }
 
-final class FavoritePatternsPresenter: FavoritePresenterProtocol {
+final class FavoritePatternsPresenter: FavoriteViewOutput {
     
+    weak var view: FavoriteViewInput?
+    private let interactor: FavoriteInteractorInput
+    private let router: FavoriteRouterInput
     
-    func getData() {
-        
+    private var rows: [Pattern] = []
+    
+    init(view: FavoriteViewInput, interactor: FavoriteInteractorInput, router: FavoriteRouterInput) {
+        self.view = view
+        self.interactor = interactor
+        self.router = router
     }
     
-    func getPattern(at indexPath: IndexPath) {
-        
+    func viewIsReady() {
+        rows = interactor.fetchFavoritePatterns()
+        view?.render(rows: rows)
     }
     
- 
+    func userDidSelectRow(at indexPath: IndexPath) {
+        guard let id = interactor.getPatternId(at: indexPath) else { return }
+        interactor.incrementViewCount(for: id)
+        rows = interactor.fetchFavoritePatterns()
+        view?.render(rows: rows)
+        router.openPatternDetails(id: id)
+    }
     
-    
+    func userDidTapSideMenu() {
+        router.toggleSideMenu()
+    }
+
+
+
 }
