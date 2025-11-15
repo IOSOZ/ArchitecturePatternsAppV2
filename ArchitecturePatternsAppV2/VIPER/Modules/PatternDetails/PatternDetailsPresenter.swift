@@ -19,12 +19,19 @@ protocol PatternDetailsViewOutput: AnyObject {
     func userDidTapOpenViewer()
 }
 
-class PatternDetailsPresenter: PatternDetailsViewOutput {
+protocol PatternDetailsInteractorOutput: AnyObject {
+    func didLoadPattern(_ pattern: PatternModel)
+    func didFailLoading(_ error: Error)
+    func didFailSaving(_ error: Error)
+}
+
+
+final class PatternDetailsPresenter {
 
     private let patternID: UUID
     
-    private var original: Pattern!
-    private var draft: PatternDraft!
+    private var original: PatternModel?
+    private var draft: PatternModel?
     
     private weak var view: PatternDetailsViewInput?
     private let router: PatternDetailsRouterInput
@@ -36,62 +43,44 @@ class PatternDetailsPresenter: PatternDetailsViewOutput {
         self.interactor = interactor
         self.patternID = patternID
     }
-    
+}
+
+extension PatternDetailsPresenter: PatternDetailsViewOutput {
     func viewIsReady() {
-        guard let entity = interactor.getPattern(with: patternID) else { return }
-        original = entity
-        draft = PatternDraft(
-            id: entity.id,
-            name: entity.name,
-            description: entity.description,
-            type: entity.type,
-            isFavorite: entity.isFavorite,
-            imageData: entity.image?.pngData()
-        )
-        pushDraftToView()
+        interactor.getPattern()
     }
     
     func userDidTapSave() {
+        guard var draft = draft else { return }
+        
         if let fields = view?.getEditedFields() {
             draft.name = fields.name
             draft.description = fields.description
         }
         
-        var updated = original!
-        updated.name = draft.name
-        updated.description = draft.description
-        updated.type = draft.type
-        updated.isFavorite = draft.isFavorite
-        if let data = draft.imageData {
-            updated.image = UIImage(data: data)
-        } else {
-            updated.image = nil
-        }
+        interactor.updatePattern(with: draft)
+        original = draft
+        self.draft = draft
         
-        interactor.updatePattern(with: updated)
-        original = updated
-        pushDraftToView()
+        view?.display(pattern: draft)
     }
     
     func userDidTapCancel() {
-        draft = PatternDraft(
-            id: original.id,
-            name: original.name,
-            description: original.description,
-            type: original.type,
-            isFavorite: original.isFavorite,
-            imageData: original.image?.pngData()
-        )
-        pushDraftToView()
+        guard let original else { return }
+        draft = original
+        view?.display(pattern: original)
     }
     
     func userDidTapChooseType() {
+        guard let draft else { return }
         router.showBottomSheet(selectedType: draft.type)
     }
     
     func userDidChoose(type: PatternType) {
+        guard var draft = draft else { return }
         draft.type = type
-        pushDraftToView()
+        self.draft = draft
+        view?.display(pattern: draft)
     }
     
     func userDidTapChangeImage() {
@@ -99,28 +88,37 @@ class PatternDetailsPresenter: PatternDetailsViewOutput {
     }
     
     func userDidPickImage(data: Data) {
-        draft.imageData = data
-        pushDraftToView()
+        guard var draft = draft else { return }
+        draft.image = data
+        self.draft = draft
+        view?.display(pattern: draft)
     }
     
     func userDidTapOpenViewer() {
-        guard let data = draft.imageData else { return }
+        guard let data = draft?.image else { return }
         router.showImageViewer(with: data)
     }
-    
-    
-    private func pushDraftToView() {
-        let viewModel = PatternDetailsViewModel(
-            name: draft.name,
-            description: draft.description,
-            typeTitle: draft.type.title,
-            isFavorite: draft.isFavorite,
-            imageData: draft.imageData
-        )
-        view?.display(viewModel: viewModel)
-    }
-
 }
+
+extension PatternDetailsPresenter: PatternDetailsInteractorOutput {
+    func didLoadPattern(_ pattern: PatternModel) {
+        original = pattern
+        draft = pattern
+        view?.display(pattern: pattern)
+    }
+    
+    func didFailLoading(_ error: any Error) {
+        print("Failed to load pattern: \(error)")
+    }
+    
+    func didFailSaving(_ error: any Error) {
+        print("Failed to save pattern: \(error)")
+    }
+    
+    
+}
+
+
 
 
 //

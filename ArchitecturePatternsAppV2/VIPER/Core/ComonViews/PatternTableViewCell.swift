@@ -32,7 +32,7 @@ final class PatternTableViewCell: UITableViewCell {
     private var bottomHorizontalStack = UIStackView()
     private var generalCellStack = UIStackView()
     
-    private var object: Pattern!
+    private var object: PatternModel!
     
     // MARK: - PatternTableViewCellDelegate
     
@@ -50,7 +50,7 @@ final class PatternTableViewCell: UITableViewCell {
     }
     
     // MARK: - UI SetUP
-    func configure(with patternModel: Pattern, isFirstCell: Bool) {
+    func configure(with patternModel: PatternModel, isFirstCell: Bool) {
         self.object = patternModel
         
         backgroundColor = .clear
@@ -98,7 +98,12 @@ final class PatternTableViewCell: UITableViewCell {
         )
         
         descriptionLabel.numberOfLines = 2
-        patternImage.image = patternModel.image
+        
+        if let data = object.image {
+            patternImage.image = UIImage(data: data)
+        } else {
+            patternImage.image = UIImage(resource: .no)
+        }
         
         favoriteButton.setImage(
             patternModel.isFavorite == false ? UIImage(named: "notLike") : UIImage(named: "like"),

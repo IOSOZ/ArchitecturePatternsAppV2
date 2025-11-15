@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 
 protocol PatternDetailsViewInput: AnyObject {
-    func display(viewModel: PatternDetailsViewModel)
+    func display(pattern: PatternModel)
     func getEditedFields() -> (name: String, description: String?)?
 }
 
@@ -247,13 +247,13 @@ extension PatternDetailsViewController: PatternDetailsViewInput {
         )
     }
     
-    func display(viewModel: PatternDetailsViewModel) {
-        navigationItem.title = viewModel.name
-        patternName.text = viewModel.name
-        patternDescription.text = viewModel.description
-        patternTypeLabel.text = "Тип: \(viewModel.typeTitle)"
+    func display(pattern: PatternModel) {
+        navigationItem.title = pattern.name
+        patternName.text = pattern.name
+        patternDescription.text = pattern.description
+        patternTypeLabel.text = "Тип: \(pattern.type.title)"
         
-        if let data = viewModel.imageData {
+        if let data = pattern.image {
             patternImage.image = UIImage(data: data)
         } else {
             patternImage.image = UIImage(resource: .no)
@@ -275,4 +275,3 @@ extension PatternDetailsViewController: UITextFieldDelegate {
         self.view.endEditing(true)
     }
 }
-

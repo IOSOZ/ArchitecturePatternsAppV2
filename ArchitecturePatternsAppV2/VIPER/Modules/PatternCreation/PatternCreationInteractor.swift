@@ -8,20 +8,26 @@
 import Foundation
 
 protocol PatternCreationInteractorInput: AnyObject {
-    func create(pattern: Pattern)
+    func create(pattern: PatternModel)
 }
-
 
 final class PatternCreationInteractor: PatternCreationInteractorInput {
     
+    weak var presenter: PatternCreationInteractorOutput?
     private let storage: PatternStorageProtocol
     
     init(storage: PatternStorageProtocol) {
         self.storage = storage
     }
     
-    func create(pattern: Pattern) {
-        storage.addNewPattern(pattern)
+    func create(pattern: PatternModel) {
+        do {
+            try storage.addNewPattern(pattern)
+            presenter?.didCreateNew(pattern: pattern)
+        } catch {
+            presenter?.didFailCreating(error)
+        }
+        
     }
     
     

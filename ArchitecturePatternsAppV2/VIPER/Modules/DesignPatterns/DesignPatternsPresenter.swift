@@ -17,50 +17,53 @@ protocol DesignPatternsViewOutput: AnyObject  {
     func userDidTapSideMenu()
 }
 
-final class DesignPatternsPresenter: DesignPatternsViewOutput {
+protocol DesignPatternsInteractorOutput: AnyObject {
+    func didLoadSections(_ sections: [[PatternModel]])
+    func didFailLoading(_ error: Error)
+    func didUpdateRow(at indexPath: IndexPath)
+    func didDeleteRow(at indexPath: IndexPath)
+}
+
+
+final class DesignPatternsPresenter {
     
     private weak var view: DesignPatternsInput?
     private let interactor: DesignPatternInteractorInput
     private let router: DesignPatternRouterInput
     
-    private var sections: [[Pattern]] = []
+    private var sections: [[PatternModel]] = []
     
     init(view: DesignPatternsInput?, interactor: DesignPatternInteractorInput, router: DesignPatternRouterInput) {
         self.view = view
         self.interactor = interactor
         self.router = router
     }
+}
+
+extension DesignPatternsPresenter: DesignPatternsViewOutput {
     
     func viewIsReady() {
-        sections = interactor.fetchPatterns()
-        view?.render(sections: sections)
+        interactor.loadPatterns()
     }
     
     func viewWillShow() {
-        sections = interactor.fetchPatterns()
-        view?.render(sections: sections)
+        interactor.loadPatterns()
     }
     
     func userDidSelectRow(at indexPath: IndexPath) {
-        guard let id = interactor.getPatternId(at: indexPath) else { return }
-        interactor.incrementViewCount(for: id)
-        sections = interactor.fetchPatterns()
-        view?.render(sections: sections)
-        router.openPatternDetails(id: id)
+        let pattern = sections[indexPath.section][indexPath.row]
+        interactor.incrementViewCounter(for: indexPath)
+        router.openPatternDetails(id: pattern.id)
     }
     
     func userDidSwipeToDelete(at indexPath: IndexPath) {
-        guard let id = interactor.getPatternId(at: indexPath) else { return }
-        interactor.deletePattern(for: id)
-        sections = interactor.fetchPatterns()
-        view?.render(sections: sections)
+        interactor.delete(at: indexPath)
     }
     
     func userDidTapFavorite(at indexPath: IndexPath) {
-        guard let id = interactor.getPatternId(at: indexPath) else { return }
-        interactor.toggleFavorite(for: id)
-        sections = interactor.fetchPatterns()
-        view?.render(sections: sections)
+        interactor.toggleFavorite(at: indexPath)
+        interactor.loadPatterns()
+        
     }
     
     func userDidTapAddNew() {
@@ -70,9 +73,25 @@ final class DesignPatternsPresenter: DesignPatternsViewOutput {
     func userDidTapSideMenu() {
         router.toggleSideMenu()
     }
+}
+
+extension DesignPatternsPresenter: DesignPatternsInteractorOutput {
+    func didLoadSections(_ sections: [[PatternModel]]) {
+        self.sections = sections
+        view?.render(sections: sections)
+    }
     
+    func didFailLoading(_ error: any Error) {
+        print ("Error: \(error)")
+    }
     
+    func didUpdateRow(at indexPath: IndexPath) {
+        view?.reloadRows(at: indexPath)
+    }
     
+    func didDeleteRow(at indexPath: IndexPath) {
+        interactor.loadPatterns()
+    }
     
     
 }

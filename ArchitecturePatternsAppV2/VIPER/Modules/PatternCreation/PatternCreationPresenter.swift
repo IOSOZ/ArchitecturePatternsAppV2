@@ -12,10 +12,15 @@ protocol PatternCreationViewOutput: AnyObject {
     func didTapCancel()
     func didTapChooseType()
     func didTapChangeImage()
-    func creationError()
+    func didNotFillRequiredFields()
 }
 
-final class PatternCreationPresenter: PatternCreationViewOutput {
+protocol PatternCreationInteractorOutput: AnyObject {
+    func didCreateNew(pattern: PatternModel)
+    func didFailCreating(_ error: Error)
+}
+
+final class PatternCreationPresenter {
     
     
     private weak var view: PatternCreationViewInput?
@@ -27,14 +32,20 @@ final class PatternCreationPresenter: PatternCreationViewOutput {
         self.interactor = interactor
         self.router = router
     }
+}
+
+extension PatternCreationPresenter: PatternCreationViewOutput {
     
     func didTapSave() {
         guard let fields = view?.getEditedFields() else { return }
-        let newPattern = Pattern(
+        let newPattern = PatternModel(
+            id: UUID(),
             type: fields.type,
             name: fields.name,
             description: fields.description,
-            image: fields.image
+            image: fields.image,
+            viewCounter: 0,
+            isFavorite: false
         )
         
         interactor.create(pattern: newPattern)
@@ -52,7 +63,20 @@ final class PatternCreationPresenter: PatternCreationViewOutput {
         router.showImageSourceAlert()
     }
     
-    func creationError() {
+    func didNotFillRequiredFields() {
         router.showCreationErrorAlert()
     }
+    
+}
+
+extension PatternCreationPresenter: PatternCreationInteractorOutput{
+    func didCreateNew(pattern: PatternModel) {
+        router.close()
+    }
+    
+    func didFailCreating(_ error: any Error) {
+        print("Failed to save pattern: \(error)")
+    }
+    
+    
 }

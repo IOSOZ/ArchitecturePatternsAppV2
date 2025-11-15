@@ -3,10 +3,10 @@
     <entity name="Pattern" representedClassName="Pattern" syncable="YES">
         <attribute name="commentary" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="image" optional="YES" attributeType="Transformable" storedInTruthFile="YES"/>
-        <attribute name="isFavorite" attributeType="Binary"/>
+        <attribute name="image" optional="YES" attributeType="Binary" storedInTruthFile="YES"/>
+        <attribute name="isFavorite" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
-        <attribute name="type" optional="YES" attributeType="Transformable"/>
-        <attribute name="viewCounter" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" attributeType="String"/>
+        <attribute name="viewCounter" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
 </model>

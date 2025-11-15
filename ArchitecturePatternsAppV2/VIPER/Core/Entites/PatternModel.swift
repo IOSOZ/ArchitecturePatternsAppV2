@@ -6,8 +6,6 @@
 //
 
 import Foundation
-#warning("Избавиться от UIKit")
-import UIKit
 
 enum PatternType: String, CaseIterable {
     case creational
@@ -26,15 +24,22 @@ enum PatternType: String, CaseIterable {
     }
 }
 
-struct Pattern {
-    let id = UUID()
+extension PatternType {
+    init?(raw: String) {
+        self = PatternType(rawValue: raw) ?? .creational
+    }
+    
+    var raw: String { rawValue }
+}
+
+struct PatternModel {
+    let id: UUID
     var type: PatternType
     var name: String
     var description: String?
-    var image: UIImage?
-    var viewCounter: Int = 0
-    var isFavorite: Bool = false
+    var image: Data?
+    var viewCounter: Int
+    var isFavorite: Bool
 }
-
 
 

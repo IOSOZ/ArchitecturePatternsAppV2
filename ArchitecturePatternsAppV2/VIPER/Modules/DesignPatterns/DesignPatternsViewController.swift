@@ -9,7 +9,8 @@ import UIKit
 import SnapKit
 
 protocol DesignPatternsInput: AnyObject {
-    func render(sections: [[Pattern]])
+    func render(sections: [[PatternModel]])
+    func reloadRows(at indexPaths: IndexPath)
 }
 
 final class DesignPatternsViewController: BaseContentViewController {
@@ -18,7 +19,7 @@ final class DesignPatternsViewController: BaseContentViewController {
     
     // MARK: - Properties
     private var tableView = UITableView()
-    private var data: [[Pattern]] = []
+    private var data: [[PatternModel]] = []
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
@@ -133,7 +134,11 @@ extension DesignPatternsViewController: UITableViewDelegate {
 }
 
 extension DesignPatternsViewController: DesignPatternsInput {
-    func render(sections: [[Pattern]]) {
+    func reloadRows(at indexPaths: IndexPath) {
+        tableView.reloadRows(at: [indexPaths], with: .none)
+    }
+    
+    func render(sections: [[PatternModel]]) {
         data = sections
         tableView.reloadData()
     }

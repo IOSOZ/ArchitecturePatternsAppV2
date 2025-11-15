@@ -13,37 +13,50 @@ protocol FavoriteViewOutput: AnyObject {
     func userDidTapSideMenu()
 }
 
-final class FavoritePatternsPresenter: FavoriteViewOutput {
+protocol FavoriteInteractorOutput: AnyObject {
+    func didLoadRows(_ rows: [PatternModel])
+    func didFailLoading(_ error: Error)
+}
+
+final class FavoritePatternsPresenter {
     
     weak var view: FavoriteViewInput?
     private let interactor: FavoriteInteractorInput
     private let router: FavoriteRouterInput
     
-    private var rows: [Pattern] = []
+    private var rows: [PatternModel] = []
     
     init(view: FavoriteViewInput, interactor: FavoriteInteractorInput, router: FavoriteRouterInput) {
         self.view = view
         self.interactor = interactor
         self.router = router
     }
-    
+}
+
+extension FavoritePatternsPresenter: FavoriteViewOutput {
     func viewIsReady() {
-        rows = interactor.fetchFavoritePatterns()
         view?.render(rows: rows)
     }
     
     func userDidSelectRow(at indexPath: IndexPath) {
-        guard let id = interactor.getPatternId(at: indexPath) else { return }
-        interactor.incrementViewCount(for: id)
-        rows = interactor.fetchFavoritePatterns()
-        view?.render(rows: rows)
-        router.openPatternDetails(id: id)
+        let pattern = rows[indexPath.row]
+        interactor.incrementViewCounter(for: indexPath)
+        router.openPatternDetails(id: pattern.id)
     }
     
     func userDidTapSideMenu() {
         router.toggleSideMenu()
     }
+    
+    
+}
 
-
-
+extension FavoritePatternsPresenter: FavoriteInteractorOutput {
+    func didLoadRows(_ rows: [PatternModel]) {
+        view?.render(rows: rows)
+    }
+    
+    func didFailLoading(_ error: any Error) {
+        print ("Error: \(error)")
+    }
 }

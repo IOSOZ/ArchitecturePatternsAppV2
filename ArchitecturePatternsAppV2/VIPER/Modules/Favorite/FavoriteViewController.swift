@@ -9,14 +9,14 @@ import UIKit
 import SnapKit
 
 protocol FavoriteViewInput: AnyObject {
-    func render(rows: [Pattern])
+    func render(rows: [PatternModel])
 }
 
 final class FavoriteViewController: BaseContentViewController {
     
     // MARK: - Properties
     private var tableView = UITableView()
-    private var data: [Pattern] = []
+    private var data: [PatternModel] = []
     
     // MARK: - MVP
     var presenter: FavoriteViewOutput!
@@ -111,7 +111,7 @@ extension FavoriteViewController: UITableViewDelegate {
 
 // MARK: - FavoriteView Protocol
 extension FavoriteViewController: FavoriteViewInput {
-    func render(rows: [Pattern]) {
+    func render(rows: [PatternModel]) {
         data = rows
         tableView.reloadData()
     }

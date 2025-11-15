@@ -9,7 +9,7 @@ import UIKit
 import PhotosUI
 
 protocol PatternCreationViewInput: AnyObject {
-    func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)?
+    func getEditedFields() -> (name: String, description: String?, image: Data?, type: PatternType)?
 }
 
 final class PatternCreationViewController: RootViewController {
@@ -233,17 +233,17 @@ extension PatternCreationViewController: UITextFieldDelegate {
 
 // MARK: - PatternCreationView Protocol
 extension PatternCreationViewController: PatternCreationViewInput {
-    func getEditedFields() -> (name: String, description: String?, image: UIImage?, type: PatternType)? {
+    func getEditedFields() -> (name: String, description: String?, image: Data?, type: PatternType)? {
         if let type = selectedType, let name = patternNameTextField.text {
             navigationController?.popViewController(animated: true)
             return (
                 name: name,
                 description: patternDescription.text,
-                image: patternImage.image,
+                image: patternImage.image?.pngData(),
                 type: type
             )
         } else {
-            presenter.creationError()
+            presenter.didNotFillRequiredFields()
             return nil
         }
     }

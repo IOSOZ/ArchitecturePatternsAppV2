@@ -39,6 +39,7 @@ struct GlobalBuilder {
             let router = DesignPatternRouter(viewController: view)
             let presenter = DesignPatternsPresenter(view: view, interactor: interactor, router: router)
             
+            interactor.presenter = presenter
             router.container = container
             view.presenter = presenter
             
@@ -50,16 +51,18 @@ struct GlobalBuilder {
             let router = FavoriteRouter(viewController: view)
             let presenter = FavoritePatternsPresenter(view: view, interactor: interactor, router: router)
             
+            interactor.presenter = presenter
             router.container = container
             view.presenter = presenter
             
             return view
         case .patternDetails(let id):
             let view = PatternDetailsViewController()
-            let interactor = PatternDetailsInteractor(storage: storage)
+            let interactor = PatternDetailsInteractor(storage: storage, id: id)
             let router = PatternDetailsRouter(viewController: view)
             let presenter = PatternDetailsPresenter(view: view, router: router, interactor: interactor, patternID: id)
             
+            interactor.presenter = presenter
             view.presenter = presenter
             
             return view
@@ -70,6 +73,7 @@ struct GlobalBuilder {
             let router = PatternCreationRouter(viewController: view)
             let presenter = PatternCreationPresenter(view: view, interactor: interactor, router: router)
             
+            interactor.presenter = presenter
             view.presenter = presenter
             
             return view
