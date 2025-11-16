@@ -150,4 +150,3 @@ extension DesignPatternsViewController: PatternTableViewCellDelegate {
         presenter.userDidTapFavorite(at: indexPath)
     }
 }
-

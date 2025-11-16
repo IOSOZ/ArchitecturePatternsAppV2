@@ -18,7 +18,7 @@ final class FavoriteViewController: BaseContentViewController {
     private var tableView = UITableView()
     private var data: [PatternModel] = []
     
-    // MARK: - MVP
+    // MARK: - VIPER
     var presenter: FavoriteViewOutput!
     
     // MARK: - Life cycle methods
@@ -76,10 +76,6 @@ private extension FavoriteViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-    }
-    
-    func updateData() {
-        
     }
 }
 

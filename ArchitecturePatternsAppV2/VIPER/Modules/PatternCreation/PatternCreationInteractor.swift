@@ -29,6 +29,4 @@ final class PatternCreationInteractor: PatternCreationInteractorInput {
         }
         
     }
-    
-    
 }

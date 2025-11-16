@@ -65,5 +65,3 @@ private extension BaseContentViewController {
         return UIBarButtonItem(customView: customButton)
     }
 }
-
-

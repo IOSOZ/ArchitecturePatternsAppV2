@@ -21,7 +21,6 @@ final class SideMenuRouter: SideMenuRouterInput {
         container?.setRoot(newVc, closeMenu: true)
     }
     
-    
     private func createController(for item: MenuItem) -> BaseContentViewController {
         let controller: RootViewController
         switch item {
@@ -39,5 +38,4 @@ final class SideMenuRouter: SideMenuRouterInput {
         
         return controller as! BaseContentViewController
     }
-    
 }

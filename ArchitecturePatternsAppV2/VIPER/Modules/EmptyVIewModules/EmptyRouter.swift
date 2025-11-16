@@ -13,6 +13,4 @@ final class EmptyRouter: EmptyRouterInput {
     func toggleSideMenu() {
         container?.toggleSideMenu(nil)
     }
-    
-    
 }

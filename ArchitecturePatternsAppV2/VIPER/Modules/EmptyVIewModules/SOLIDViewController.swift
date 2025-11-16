@@ -68,5 +68,4 @@ private extension SOLIDViewController {
     }
 }
 
-
 extension SOLIDViewController: EmptyViewInput { }

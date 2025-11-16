@@ -223,7 +223,7 @@
 		6C994E512EA80EA1009BDF39 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				6C994E552EA80F5E009BDF39 /* Entites */,
+				6C994E552EA80F5E009BDF39 /* Data Layer */,
 				6C994E522EA80EB2009BDF39 /* Base */,
 				6C994E532EA80EFB009BDF39 /* ComonViews */,
 				6C994E282E9D2F73009BDF39 /* Extensions */,
@@ -254,7 +254,7 @@
 			path = ComonViews;
 			sourceTree = "<group>";
 		};
-		6C994E552EA80F5E009BDF39 /* Entites */ = {
+		6C994E552EA80F5E009BDF39 /* Data Layer */ = {
 			isa = PBXGroup;
 			children = (
 				6C994E582EA80FD7009BDF39 /* DataStore.swift */,
@@ -263,7 +263,7 @@
 				6CA6910F2EC5546400B51EF2 /* Pattern+CoreDataClass.swift */,
 				6CA691102EC5546400B51EF2 /* Pattern+CoreDataProperties.swift */,
 			);
-			path = Entites;
+			path = "Data Layer";
 			sourceTree = "<group>";
 		};
 		6C9E79162E62469A00EB03D6 = {

@@ -25,7 +25,6 @@ protocol PatternDetailsInteractorOutput: AnyObject {
     func didFailSaving(_ error: Error)
 }
 
-
 final class PatternDetailsPresenter {
 
     private let patternID: UUID
@@ -114,42 +113,4 @@ extension PatternDetailsPresenter: PatternDetailsInteractorOutput {
     func didFailSaving(_ error: any Error) {
         print("Failed to save pattern: \(error)")
     }
-    
-    
 }
-
-
-
-
-//
-//weak var view: PatternDetailsViewProtocol?
-//private let storage: PatternStorageProtocol
-//private let objectID: UUID
-//
-//var currentPattern: Pattern? { storage.getPatternByID(objectID) }
-//init(view: PatternDetailsViewProtocol, storage: PatternStorageProtocol, objectID: UUID) {
-//    self.view = view
-//    self.storage = storage
-//    self.objectID = objectID
-//}
-//
-//func savePatternChanges() {
-//    guard
-//        let fields = view?.getEditedFields(),
-//        var pattern = storage.getPatternByID(objectID)
-//    else { return }
-//    
-//    pattern.name = fields.name
-//    pattern.description = fields.description
-//    pattern.image = fields.image
-//    pattern.type = fields.type
-//    
-//    storage.updatePattern(pattern)
-//    view?.displayFieldsWith(pattern: pattern)
-//       
-//}
-//
-//func getData() {
-//    guard let pattern = storage.getPatternByID(objectID) else { return }
-//    view?.displayFieldsWith(pattern: pattern)
-//}

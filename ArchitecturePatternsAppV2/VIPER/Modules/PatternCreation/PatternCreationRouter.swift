@@ -75,5 +75,4 @@ final class PatternCreationRouter: PatternCreationRouterInput {
         alert.addAction(okButton)
         viewController?.present(alert, animated: true)
     }
-    
 }

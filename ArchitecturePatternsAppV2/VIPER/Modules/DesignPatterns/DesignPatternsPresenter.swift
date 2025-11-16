@@ -92,6 +92,4 @@ extension DesignPatternsPresenter: DesignPatternsInteractorOutput {
     func didDeleteRow(at indexPath: IndexPath) {
         interactor.loadPatterns()
     }
-    
-    
 }

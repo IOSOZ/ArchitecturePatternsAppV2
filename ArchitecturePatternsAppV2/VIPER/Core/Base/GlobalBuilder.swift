@@ -18,7 +18,7 @@ enum Module {
     case sideMenu
 }
 
-
+// MARK: - Build Module
 struct GlobalBuilder {
     
     private static var storage: PatternStorageProtocol!
@@ -43,7 +43,6 @@ struct GlobalBuilder {
             router.container = container
             view.presenter = presenter
             
-            
             return view
         case .favorite:
             let view = FavoriteViewController()
@@ -66,7 +65,6 @@ struct GlobalBuilder {
             view.presenter = presenter
             
             return view
-            
         case .patternCreation:
             let view = PatternCreationViewController()
             let interactor = PatternCreationInteractor(storage: storage)
@@ -86,7 +84,6 @@ struct GlobalBuilder {
             view.presenter = presenter
             
             return view
-    
         case .oop:
             let view = OOPViewController()
             let router = EmptyRouter()
@@ -96,7 +93,6 @@ struct GlobalBuilder {
             view.presenter = presenter
             
             return view
-            
         case .solid:
             let view = SOLIDViewController()
             let router = EmptyRouter()
@@ -119,5 +115,3 @@ struct GlobalBuilder {
         }
     }
 }
-
-

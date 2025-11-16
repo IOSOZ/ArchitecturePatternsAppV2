@@ -16,5 +16,3 @@ protocol EmptyViewOutput: AnyObject {
 protocol EmptyRouterInput: AnyObject {
     func toggleSideMenu()
 }
-
-

@@ -36,5 +36,3 @@ extension UIFont {
         UIFont(name: "SFPro-Regular", size: size.rawValue) ?? .systemFont(ofSize: size.rawValue, weight: .regular)
     }
 }
-
-

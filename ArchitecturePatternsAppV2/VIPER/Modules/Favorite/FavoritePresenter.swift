@@ -35,7 +35,7 @@ final class FavoritePatternsPresenter {
 
 extension FavoritePatternsPresenter: FavoriteViewOutput {
     func viewIsReady() {
-        view?.render(rows: rows)
+        interactor.loadFavoritePatterns()
     }
     
     func userDidSelectRow(at indexPath: IndexPath) {
@@ -47,12 +47,11 @@ extension FavoritePatternsPresenter: FavoriteViewOutput {
     func userDidTapSideMenu() {
         router.toggleSideMenu()
     }
-    
-    
 }
 
 extension FavoritePatternsPresenter: FavoriteInteractorOutput {
     func didLoadRows(_ rows: [PatternModel]) {
+        self.rows = rows
         view?.render(rows: rows)
     }
     

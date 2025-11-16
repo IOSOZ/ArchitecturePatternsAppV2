@@ -10,7 +10,6 @@ import Foundation
 
 protocol FavoriteInteractorInput: AnyObject {
     func loadFavoritePatterns()
-    func toggleFavorite(at indexPath: IndexPath)
     func incrementViewCounter(for indexPath: IndexPath)
 }
 
@@ -33,19 +32,6 @@ final class FavoriteInteractor: FavoriteInteractorInput {
         }
     }
     
-    func toggleFavorite(at indexPath: IndexPath) {
-        var pattern = patterns[indexPath.row]
-        pattern.isFavorite.toggle()
-        
-        do {
-            try storage.updatePattern(pattern)
-            patterns[indexPath.row] = pattern
-            presenter?.didLoadRows(patterns)
-        } catch {
-            presenter?.didFailLoading(error)
-        }
-    }
-    
     func incrementViewCounter(for indexPath: IndexPath) {
         let pattern = patterns[indexPath.row]
         do {
@@ -55,5 +41,3 @@ final class FavoriteInteractor: FavoriteInteractorInput {
         }
     }
 }
-
-

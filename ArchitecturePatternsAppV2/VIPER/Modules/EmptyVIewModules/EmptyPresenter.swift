@@ -20,6 +20,4 @@ final class EmptyPresenter: EmptyViewOutput {
     func userDidTapSideMenu() {
         router.toggleSideMenu()
     }
-    
-    
 }

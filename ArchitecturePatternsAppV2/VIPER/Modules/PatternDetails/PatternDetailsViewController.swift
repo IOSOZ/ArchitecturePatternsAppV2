@@ -185,17 +185,6 @@ private extension PatternDetailsViewController {
         }
     }
     
-//    // MARK: - Open Photo Gallery
-//    func openPhotoGallery() {
-//        var config = PHPickerConfiguration(photoLibrary: .shared())
-//        config.filter = .images
-//        config.selectionLimit = 1
-//        
-//        let picker = PHPickerViewController(configuration: config)
-//        picker.delegate = self
-//        present(picker, animated: true)
-//    }
-    
     // MARK: - Toggle Edit Mode
     func toggleEditMode() {
         isEditingMode.toggle()

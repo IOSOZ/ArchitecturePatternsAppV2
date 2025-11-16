@@ -29,7 +29,7 @@ final class PatternCreationViewController: RootViewController {
     // MARK: - State
     private var selectedType: PatternType?
     
-    // MARK: - MVP
+    // MARK: - VIPER
     var presenter: PatternCreationViewOutput!
     
     // MARK: - Life cycle methods
@@ -40,20 +40,20 @@ final class PatternCreationViewController: RootViewController {
     
     // MARK: - Objc methods
     @objc func didTapRightBarButton() {
-        presenter.didTapSave()
+        presenter.userDidTapSave()
     }
     
     @objc func cancelEditing() {
-        presenter.didTapCancel()
+        presenter.userDidTapCancel()
     }
     
     
     @objc func choosePatternTypeButtonTapped() {
-        presenter.didTapChooseType()
+        presenter.userDidTapChooseType()
     }
     
     @objc func choosePhoto() {
-        presenter.didTapChangeImage()
+        presenter.userDidTapChangeImage()
     }
 }
 
@@ -243,7 +243,7 @@ extension PatternCreationViewController: PatternCreationViewInput {
                 type: type
             )
         } else {
-            presenter.didNotFillRequiredFields()
+            presenter.userDidNotFillRequiredFields()
             return nil
         }
     }

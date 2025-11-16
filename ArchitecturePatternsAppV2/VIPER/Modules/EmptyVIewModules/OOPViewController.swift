@@ -70,5 +70,4 @@ private extension OOPViewController {
     }
 }
 
-
 extension OOPViewController: EmptyViewInput { }

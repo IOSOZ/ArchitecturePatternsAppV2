@@ -8,11 +8,11 @@
 import Foundation
 
 protocol PatternCreationViewOutput: AnyObject {
-    func didTapSave()
-    func didTapCancel()
-    func didTapChooseType()
-    func didTapChangeImage()
-    func didNotFillRequiredFields()
+    func userDidTapSave()
+    func userDidTapCancel()
+    func userDidTapChooseType()
+    func userDidTapChangeImage()
+    func userDidNotFillRequiredFields()
 }
 
 protocol PatternCreationInteractorOutput: AnyObject {
@@ -21,7 +21,6 @@ protocol PatternCreationInteractorOutput: AnyObject {
 }
 
 final class PatternCreationPresenter {
-    
     
     private weak var view: PatternCreationViewInput?
     private let interactor: PatternCreationInteractorInput
@@ -36,7 +35,7 @@ final class PatternCreationPresenter {
 
 extension PatternCreationPresenter: PatternCreationViewOutput {
     
-    func didTapSave() {
+    func userDidTapSave() {
         guard let fields = view?.getEditedFields() else { return }
         let newPattern = PatternModel(
             id: UUID(),
@@ -51,19 +50,19 @@ extension PatternCreationPresenter: PatternCreationViewOutput {
         interactor.create(pattern: newPattern)
     }
     
-    func didTapCancel() {
+    func userDidTapCancel() {
         router.close()
     }
     
-    func didTapChooseType() {
+    func userDidTapChooseType() {
         router.showBottomSheet()
     }
     
-    func didTapChangeImage() {
+    func userDidTapChangeImage() {
         router.showImageSourceAlert()
     }
     
-    func didNotFillRequiredFields() {
+    func userDidNotFillRequiredFields() {
         router.showCreationErrorAlert()
     }
     
@@ -77,6 +76,4 @@ extension PatternCreationPresenter: PatternCreationInteractorOutput{
     func didFailCreating(_ error: any Error) {
         print("Failed to save pattern: \(error)")
     }
-    
-    
 }
