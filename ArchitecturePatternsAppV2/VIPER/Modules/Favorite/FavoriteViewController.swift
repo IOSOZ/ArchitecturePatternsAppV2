@@ -92,7 +92,7 @@ extension FavoriteViewController: UITableViewDataSource {
         
         let isFirstCell = indexPath.row == 0 ? true : false
         
-       cell.configure(with: patternModel, isFirstCell: isFirstCell)
+        cell.configure(with: patternModel, isFirstCell: isFirstCell)
         
         return cell
     }

@@ -15,6 +15,9 @@ protocol DesignPatternsViewOutput: AnyObject  {
     func userDidTapFavorite(at indexPath: IndexPath)
     func userDidTapAddNew()
     func userDidTapSideMenu()
+    func dataForCell(at indexPath: IndexPath) -> PatternModel
+    func getNumberOfRows(for section: Int) -> Int
+    func getNumberOfSections() -> Int
 }
 
 protocol DesignPatternsInteractorOutput: AnyObject {
@@ -31,7 +34,7 @@ final class DesignPatternsPresenter {
     private let interactor: DesignPatternInteractorInput
     private let router: DesignPatternRouterInput
     
-    private var sections: [[PatternModel]] = []
+    private var data: [[PatternModel]] = []
     
     init(view: DesignPatternsInput?, interactor: DesignPatternInteractorInput, router: DesignPatternRouterInput) {
         self.view = view
@@ -51,8 +54,9 @@ extension DesignPatternsPresenter: DesignPatternsViewOutput {
     }
     
     func userDidSelectRow(at indexPath: IndexPath) {
-        let pattern = sections[indexPath.section][indexPath.row]
+        let pattern = data[indexPath.section][indexPath.row]
         interactor.incrementViewCounter(for: indexPath)
+        view?.reloadRows(at: indexPath)
         router.openPatternDetails(id: pattern.id)
     }
     
@@ -63,7 +67,6 @@ extension DesignPatternsPresenter: DesignPatternsViewOutput {
     func userDidTapFavorite(at indexPath: IndexPath) {
         interactor.toggleFavorite(at: indexPath)
         interactor.loadPatterns()
-        
     }
     
     func userDidTapAddNew() {
@@ -73,12 +76,23 @@ extension DesignPatternsPresenter: DesignPatternsViewOutput {
     func userDidTapSideMenu() {
         router.toggleSideMenu()
     }
+    
+    func dataForCell(at indexPath: IndexPath) -> PatternModel {
+        return data[indexPath.section][indexPath.row]
+    }
+    
+    func getNumberOfRows(for section: Int) -> Int {
+        return data[section].count
+    }
+    
+    func getNumberOfSections() -> Int {
+        return data.count
+    }
 }
 
 extension DesignPatternsPresenter: DesignPatternsInteractorOutput {
     func didLoadSections(_ sections: [[PatternModel]]) {
-        self.sections = sections
-        view?.render(sections: sections)
+        self.data = sections
     }
     
     func didFailLoading(_ error: any Error) {

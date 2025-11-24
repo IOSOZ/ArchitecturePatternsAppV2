@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 protocol DesignPatternsInput: AnyObject {
-    func render(sections: [[PatternModel]])
+    func dataHasChanges()
     func reloadRows(at indexPaths: IndexPath)
 }
 
@@ -19,7 +19,6 @@ final class DesignPatternsViewController: BaseContentViewController {
     
     // MARK: - Properties
     private var tableView = UITableView()
-    private var data: [[PatternModel]] = []
     
     // MARK: - Life cycle methods
     override func viewDidLoad() {
@@ -85,11 +84,11 @@ private extension DesignPatternsViewController {
 // MARK: - UITableViewDataSource
 extension DesignPatternsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        data[section].count
+        presenter.getNumberOfRows(for: section)
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        data.count
+        presenter.getNumberOfSections()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -97,11 +96,9 @@ extension DesignPatternsViewController: UITableViewDataSource {
     
         cell.delegate = self
         
-        let patternModel = data[indexPath.section][indexPath.row]
-        
         let isFirstCell = indexPath.row == 0 ? true : false
         
-        cell.configure(with: patternModel, isFirstCell: isFirstCell)
+        cell.configure(with: presenter.dataForCell(at: indexPath) , isFirstCell: isFirstCell)
         
         return cell
     }
@@ -138,8 +135,7 @@ extension DesignPatternsViewController: DesignPatternsInput {
         tableView.reloadRows(at: [indexPaths], with: .none)
     }
     
-    func render(sections: [[PatternModel]]) {
-        data = sections
+    func dataHasChanges() {
         tableView.reloadData()
     }
 }
