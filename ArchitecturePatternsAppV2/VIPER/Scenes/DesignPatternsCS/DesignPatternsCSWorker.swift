@@ -9,9 +9,28 @@
 //  you can apply clean architecture to your iOS and Mac projects,
 //  see http://clean-swift.com
 //
+import Foundation
 
 class DesignPatternsCSWorker {
-    func doSomeWork() {
-        
+    private let storage: PatternStorageProtocol
+    
+    init(storage: PatternStorageProtocol) {
+        self.storage = storage
+    }
+    
+    func fetchAllPatterns() throws -> [Pattern] {
+        try storage.getAllPatterns()
+    }
+    
+    func updatePattern(_ pattern: PatternModel) throws {
+        try storage.updatePattern(pattern)
+    }
+    
+    func deletePattern(_ pattern: PatternModel) throws {
+        try storage.removePattern(pattern)
+    }
+    
+    func incrementViews(for pattern: PatternModel) throws {
+        try storage.incrementViewCounterFor(pattern: pattern)
     }
 }

@@ -10,16 +10,50 @@
 //  see http://clean-swift.com
 //
 
+import Foundation
+
 protocol DesignPatternsCSPresentationLogic {
-    func presentSomething(response: DesignPatternsCS.Something.Response)
+    func presentPatterns(response: DesignPatternsCS.LoadList.Response)
+    func presentRowUpdate(response: DesignPatternsCS.RowUpdate.Response)
+    func presentRowDeletion(response: DesignPatternsCS.RowDelete.Response)
+    func presentError(response: DesignPatternsCS.Error.Response)
 }
 
 class DesignPatternsCSPresenter: DesignPatternsCSPresentationLogic {
     
     weak var viewController: DesignPatternsCSDisplayLogic?
     
-    func presentSomething(response: DesignPatternsCS.Something.Response) {
-        let viewModel = DesignPatternsCS.Something.ViewModel()
-        viewController?.displaySomething(viewModel: viewModel)
+    func presentPatterns(response: DesignPatternsCS.LoadList.Response) {
+        let sectionsVM: [DesignPatternsCS.LoadList.ViewModel.Section] =
+        response.sections.enumerated().map { (sectionsIndex, patterns) in
+            let type = patterns.first?.type ?? PatternType.creational
+            let sectionTitle = type.title
+            
+            let rows = patterns.map { pattern in
+                DesignPatternsCS.LoadList.ViewModel.Row(
+                    id: pattern.id,
+                    title: pattern.name,
+                    subtitle: pattern.description ?? "",
+                    typeTitle: pattern.type.title,
+                    isFavorite: pattern.isFavorite,
+                    viewCounterText: "\(pattern.viewCounter) просмотров"
+                )
+            }
+            return .init(title: sectionTitle, rows: rows)
+        }
     }
+    
+    func presentRowUpdate(response: DesignPatternsCS.RowUpdate.Response) {
+        let vm = DesignPatternsCS.RowUpdate.ViewModel(indexPath: response.indexPath)
+        viewController?.displayRowUpdate(viewModel: vm)
+    }
+    
+    func presentRowDeletion(response: DesignPatternsCS.RowDelete.Response) {
+        <#code#>
+    }
+    
+    func presentError(response: DesignPatternsCS.Error.Response) {
+        <#code#>
+    }
+    
 }

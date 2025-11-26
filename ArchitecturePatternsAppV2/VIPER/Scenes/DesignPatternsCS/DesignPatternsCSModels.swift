@@ -9,21 +9,61 @@
 //  you can apply clean architecture to your iOS and Mac projects,
 //  see http://clean-swift.com
 //
+import Foundation
 
 enum DesignPatternsCS {
  
     // MARK: Use cases
-    enum Something {
-        struct Request {
-            
-        }
+    enum LoadList {
+        struct Request {}
         
         struct Response {
-            
+            let sections: [[Pattern]]
         }
         
         struct ViewModel {
+            struct Row {
+                let model: PatternModel
+            }
+            struct Section {
+                let title: String
+                let rows: [Row]
+            }
             
+            let sections: [Section]
+        }
+    }
+    enum RowUpdate {
+        struct Request {
+            let indexPath: IndexPath
+        }
+        struct Response {
+            let indexPath: IndexPath
+        }
+        struct ViewModel {
+            let indexPath: IndexPath
+        }
+    }
+    
+    enum RowDelete {
+        struct Request {
+            let indexPath: IndexPath
+        }
+        struct Response {
+            let indexPath: IndexPath
+        }
+        struct ViewModel {
+            let indexPath: IndexPath
+        }
+    }
+    
+    enum Error {
+        struct Response {
+            let error: Error
+        }
+        
+        struct ViewModel {
+            let message: String
         }
     }
 }

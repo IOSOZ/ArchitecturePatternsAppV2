@@ -9,25 +9,60 @@
 //  you can apply clean architecture to your iOS and Mac projects,
 //  see http://clean-swift.com
 //
+import Foundation
 
 protocol DesignPatternsCSBusinessLogic {
-    func doSomething(request: DesignPatternsCS.Something.Request)
+    func loadPatterns(request: DesignPatternsCS.LoadList.Request)
+    func toggleFavorite(request: DesignPatternsCS.RowUpdate.Request)
+    func deletePattern(request: DesignPatternsCS.RowDelete.Request)
+    func incrementViewCounter(at indexPath: IndexPath)
 }
 
 protocol DesignPatternsCSDataStore {
-    
+    var sections: [[PatternModel]] {get set}
 }
 
-class DesignPatternsCSInteractor: DesignPatternsCSBusinessLogic, DesignPatternsCSDataStore {
+final class DesignPatternsCSInteractor: DesignPatternsCSBusinessLogic, DesignPatternsCSDataStore {
+   
     
     var presenter: DesignPatternsCSPresentationLogic?
-    var worker: DesignPatternsCSWorker?
+    var worker: DesignPatternsCSWorker
     
-    func doSomething(request: DesignPatternsCS.Something.Request) {
-        worker = DesignPatternsCSWorker()
-        worker?.doSomeWork()
-        
-        let response = DesignPatternsCS.Something.Response()
-        presenter?.presentSomething(response: response)
+    var sections: [[PatternModel]] = []
+    
+    init(worker: DesignPatternsCSWorker) {
+        self.worker = worker
+    }
+    
+    func loadPatterns(request: DesignPatternsCS.LoadList.Request) {
+        do {
+            let allPatterns = try worker.fetchAllPatterns()
+            sections = Self.makeSections(from: allPatterns)
+            presenter?.presentSomething(response: )
+        } catch {
+            
+        }
+    }
+    
+    func toggleFavorite(request: DesignPatternsCS.RowUpdate.Request) {
+        <#code#>
+    }
+    
+    func deletePattern(request: DesignPatternsCS.RowDelete.Request) {
+        <#code#>
+    }
+    
+    func incrementViewCounter(at indexPath: IndexPath) {
+        <#code#>
+    }
+}
+
+#warning("Глубже осознать")
+private extension DesignPatternsCSInteractor {
+    static func makeSections(from all: [PatternModel]) -> [[PatternModel]] {
+        let grouped = Dictionary(grouping: all, by: {$0.type})
+        return PatternType.allCases.map { type in
+            grouped[type] ?? []
+        }
     }
 }

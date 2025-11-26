@@ -13,7 +13,8 @@
 import UIKit
 
 protocol DesignPatternsCSDisplayLogic: AnyObject {
-    func displaySomething(viewModel: DesignPatternsCS.Something.ViewModel)
+    func displayRowUpdate(viewModel: DesignPatternsCS.RowUpdate.ViewModel)
+    func displayRowDeletion(viewModel: DesignPatternsCS.RowDelete.ViewModel)
 }
 
 class DesignPatternsCSViewController: UIViewController {
@@ -49,7 +50,7 @@ class DesignPatternsCSViewController: UIViewController {
     }
         
     private func doSomething() {
-        let request = DesignPatternsCS.Something.Request()
+        let request = DesignPatternsCS.LoadList.Request()
         interactor?.doSomething(request: request)
     }
     
@@ -69,7 +70,7 @@ class DesignPatternsCSViewController: UIViewController {
 }
 
 extension DesignPatternsCSViewController: DesignPatternsCSDisplayLogic {
-    func displaySomething(viewModel: DesignPatternsCS.Something.ViewModel) {
+    func displaySomething(viewModel: DesignPatternsCS.LoadList.ViewModel) {
         
     }
 }
