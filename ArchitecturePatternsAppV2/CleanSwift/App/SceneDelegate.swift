@@ -17,8 +17,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let containerVC = ContainerViewController()
         let storage = StorageManager()
+        let remoteStorage = PatternRemoteRealtimeStore()
         
-        GlobalBuilder.configure(storage: storage, container: containerVC)
+        GlobalBuilder.configure(
+            storage: storage,
+            container: containerVC,
+            remoteStorage: remoteStorage
+        )
         
         let sideMenu = GlobalBuilder.create(.sideMenu)
         let startVC = GlobalBuilder.create(.designPatterns)

@@ -11,13 +11,19 @@
 //
 
 class PatternCreationWorker {
-    let storage: PatternStorageProtocol
-    
-    init(dataStore: PatternStorageProtocol) {
-        self.storage = dataStore
+    private let remoteStore: PatternRemoteStoreProtocol
+    private let dataStore: PatternStorageProtocol
+
+    init(remoteStore: PatternRemoteStoreProtocol, dataStore: PatternStorageProtocol) {
+        self.remoteStore = remoteStore
+        self.dataStore = dataStore
     }
     
-    func addNewPattern(_ newPattern: PatternModel) throws {
-        try storage.addNewPattern(newPattern)
+    func addNewPatternRemote(_ pattern: PatternModel, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        remoteStore.save(pattern, completion: completion)
+    }
+    
+    func addNewPatternLocal(_ pattern: PatternModel) throws {
+        try dataStore.addNewPattern(pattern)
     }
 }

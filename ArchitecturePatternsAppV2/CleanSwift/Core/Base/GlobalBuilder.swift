@@ -23,10 +23,16 @@ struct GlobalBuilder {
     
     private static var storage: PatternStorageProtocol!
     private static weak var container: ContainerViewController?
+    private static var remoteStorage:  PatternRemoteStoreProtocol!
     
-    static func configure(storage: PatternStorageProtocol, container: ContainerViewController) {
+    static func configure(
+        storage: PatternStorageProtocol,
+        container: ContainerViewController,
+        remoteStorage: PatternRemoteStoreProtocol
+    ) {
         self.storage = storage
         self.container = container
+        self.remoteStorage = remoteStorage
     }
     
     static func create(_ module: Module) -> RootViewController {
@@ -35,7 +41,7 @@ struct GlobalBuilder {
             
         case .designPatterns:
             let view = DesignPatternsViewController()
-            let interactor = DesignPatternsInteractor(worker: DesignPatternsWorker(storage: storage))
+            let interactor = DesignPatternsInteractor(worker: DesignPatternsWorker(remoteStore: remoteStorage))
             let router = DesignPatternsRouter()
             let presenter = DesignPatternsPresenter()
             
@@ -69,7 +75,7 @@ struct GlobalBuilder {
             
         case .patternDetails(let id):
             let view = PatternDetailsViewController()
-            let interactor = PatternDetailsNewInteractor(patternId: id, worker: PatternDetailsWorker(storage: storage))
+            let interactor = PatternDetailsNewInteractor(patternId: id, worker: PatternDetailsWorker(remoteStore: remoteStorage))
             let router = PatternDetailsNewRouter()
             let presenter = PatternDetailsPresenter()
             
@@ -84,7 +90,7 @@ struct GlobalBuilder {
             return view
         case .patternCreation:
             let view = PatternCreationViewController()
-            let interactor = PatternCreationNewInteractor(worker: PatternCreationWorker(dataStore: storage))
+            let interactor = PatternCreationNewInteractor(worker: PatternCreationWorker(remoteStore: remoteStorage, dataStore: storage))
             let router = PatternCreationRouter()
             
             view.interactor = interactor

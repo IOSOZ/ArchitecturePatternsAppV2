@@ -27,20 +27,32 @@ class PatternDetailsNewInteractor: PatternDetailsBusinessLogic {
     }
     
     func getPattern(request: PatternDetails.LoadPattern.Request) {
-        do {
-            guard let pattern = try worker.getPattern(by: patternId) else { return }
-            let response = PatternDetails.LoadPattern.Response(patternModel: pattern)
-            presenter?.presentPattern(response: response)
-        } catch {
+        worker.getPattern(by: patternId) { [weak self] result in
+            guard let self else { return }
             
+            switch result {
+            case .success(let currentPattern):
+                
+                let response = PatternDetails.LoadPattern.Response(patternModel: currentPattern)
+                
+                DispatchQueue.main.async {
+                    self.presenter?.presentPattern(response: response)
+                }
+            case .failure(let error):
+                print("loadPattern failed", error)
+            }
         }
     }
     
     func updatePattern(request: PatternDetails.UpdatePattern.Request) {
-        do {
-            try worker.updatePattern(with: request.patternModel)
-        } catch {
-            
+        let patternModel = request.patternModel
+        worker.updatePattern(patternModel) { result in
+            switch result {
+            case .success():
+                print("Pattern was updated")
+            case.failure(let error):
+                print("updatePattern failed", error)
+            }
         }
     }
 

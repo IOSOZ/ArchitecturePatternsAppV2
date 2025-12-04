@@ -36,13 +36,23 @@ final class DesignPatternsInteractor: DesignPatternsBusinessLogic, DesignPattern
     }
     
     func loadPatterns(request: DesignPatterns.LoadList.Request) {
-        do {
-            let all = try worker.fetchAllPatterns()
-            sections = Self.makeSections(from: all)
-            let response = DesignPatterns.LoadList.Response(sections: sections)
-            presenter?.presentList(response: response)
-        } catch {
-            // Тут можно обработать ошибку
+        worker.fetchAllPatterns { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let allPatterns):
+                let grouped = Self.makeSections(from: allPatterns)
+                self.sections = grouped
+                
+                let response = DesignPatterns.LoadList.Response(sections: grouped)
+                
+                DispatchQueue.main.async {
+                    self.presenter?.presentList(response: response)
+                }
+                
+            case .failure(let error):
+                print("loadPattern failed", error)
+            }
         }
     }
     
@@ -50,32 +60,28 @@ final class DesignPatternsInteractor: DesignPatternsBusinessLogic, DesignPattern
         let indexPath = request.indexPath
         guard var pattern = getPattern(at: indexPath) else { return }
         pattern.isFavorite.toggle()
+    
+        sections[indexPath.section][indexPath.row] = pattern
         
-        do {
-            try worker.updatePattern(pattern)
-            sections[indexPath.section][indexPath.row] = pattern
-            let response = DesignPatterns.ToggleFavorite.Response(
-                indexPath: indexPath,
-                updatedPattern: pattern
-            )
-            presenter?.presentToggleFavorite(response: response)
-        } catch {
-            // Тут можно обработать ошибку
+        worker.updatePattern(pattern) { result in
+            if case let .failure(error) = result {
+                print("updatePattern failed", error)
+            }
         }
+        let response = DesignPatterns.ToggleFavorite.Response(indexPath: indexPath, updatedPattern: pattern)
+        presenter?.presentToggleFavorite(response: response)
     }
     
     func deletePattern(request: DesignPatterns.RowDelete.Request) {
         let indexPath = request.indexPath
         guard let pattern = getPattern(at: indexPath) else { return }
+    
+        worker.deletePattern(pattern) 
         
-        do {
-            try worker.deletePattern(pattern)
-            sections[indexPath.section].remove(at: indexPath.row)
-            let response = DesignPatterns.RowDelete.Response(indexPath: indexPath)
-            presenter?.presentDelete(response: response)
-        } catch {
-            // Тут можно обработать ошибку
-        }
+        sections[indexPath.section].remove(at: indexPath.row)
+        
+        let response = DesignPatterns.RowDelete.Response(indexPath: indexPath)
+        presenter?.presentDelete(response: response)
     }
     
     func selectPattern(request: DesignPatterns.Select.Request) {
@@ -83,13 +89,13 @@ final class DesignPatternsInteractor: DesignPatternsBusinessLogic, DesignPattern
         guard let pattern = getPattern(at: indexPath) else { return }
         selectedPattern = pattern
         
-        do {
-            try worker.incrementViews(for: pattern)
-        } catch {
-            // Тут можно обработать ошибку 
+        worker.incrementViewCounterFor(pattern) { result in
+            if case let .failure(error) = result {
+                print("incrementCounter failed", error)
+            }
         }
-    }
     
+    }
 }
 
 #warning("Глубже осознать")

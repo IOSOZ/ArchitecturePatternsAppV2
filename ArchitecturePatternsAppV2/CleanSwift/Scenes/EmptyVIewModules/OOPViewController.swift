@@ -12,6 +12,7 @@ class OOPViewController: BaseContentViewController {
     
     // MARK: - Clean Swift
     var router: EmptyRouter?
+    private let seedUpLoader = SeedLoader()
     
     // MARK: - UI Properties
     let technicalWorkImage = UIImageView(image: UIImage(resource: .technicalWork))
@@ -27,6 +28,19 @@ class OOPViewController: BaseContentViewController {
     @objc override func didTapRightButton() {
         router?.toggleSideMenu()
     }
+    
+    @objc func handleTripleTap() {
+        let alert = UIAlertController(
+            title: "Reset remote DB?",
+            message: "Все удалённые паттерны будут стерты и заменены сидовыми.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Сбросить", style: .destructive) { [weak self] _ in
+            self?.performRemoteReset()
+        })
+        present(alert, animated: true)
+    }
 }
 
 // MARK: - OOPViewController Extension
@@ -37,6 +51,7 @@ private extension OOPViewController {
         setupUI()
         addViews()
         setupConstraints()
+        setupTripleTapReset()
     }
     
     
@@ -73,4 +88,27 @@ private extension OOPViewController {
     }
 }
 
+
+private extension OOPViewController {
+    func setupTripleTapReset() {
+        let tripleTap = UITapGestureRecognizer(target: self, action: #selector(handleTripleTap))
+        tripleTap.numberOfTapsRequired = 3
+        self.technicalWorkImage.isUserInteractionEnabled = true
+        self.technicalWorkImage.addGestureRecognizer(tripleTap)
+    }
+    
+    private func performRemoteReset() {
+        seedUpLoader.resetRemoteToSeeds { [weak self] in
+            let done = UIAlertController(
+                title: "Готово",
+                message: "Удалённая база сброшена к сидовым данным.",
+                preferredStyle: .alert
+            )
+            done.addAction(UIAlertAction(title: "OK", style: .default))
+            self?.present(done, animated: true)
+        }
+    }
+    
+    
+}
 

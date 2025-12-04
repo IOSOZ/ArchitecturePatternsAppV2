@@ -29,3 +29,15 @@ extension Pattern {
 extension Pattern : Identifiable {
 
 }
+
+extension Pattern {
+    func apply(from model: PatternModel) {
+        id = model.id
+        type = model.type.raw
+        name = model.name
+        commentary = model.description
+        image = model.image
+        viewCounter = Int16(model.viewCounter)
+        isFavorite = model.isFavorite
+    }
+}

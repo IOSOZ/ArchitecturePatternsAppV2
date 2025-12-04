@@ -13,18 +13,19 @@
 import Foundation
 
 class PatternDetailsWorker {
-    private let storage: PatternStorageProtocol
+    private let remoteStore: PatternRemoteStoreProtocol
     
-    init(storage: PatternStorageProtocol) {
-        self.storage = storage
+    init(remoteStore: PatternRemoteStoreProtocol) {
+        self.remoteStore = remoteStore
     }
     
-    func getPattern(by id: UUID) throws -> PatternModel? {
-        try storage.getPatternByID(id)
+    func getPattern(by id: UUID, completion: @escaping ((Result<PatternModel, Error>) -> Void)) {
+        remoteStore.getPatternByID(id, completion: completion)
     }
+        
     
-    func updatePattern(with pattern: PatternModel) throws {
-        try storage.updatePattern(pattern)
+    func updatePattern(_ pattern: PatternModel, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        remoteStore.save(pattern, completion: completion)
     }
     
 }

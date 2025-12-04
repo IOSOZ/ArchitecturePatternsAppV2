@@ -11,25 +11,30 @@
 //
 
 class DesignPatternsWorker {
-    private let storage: PatternStorageProtocol
     
-    init(storage: PatternStorageProtocol) {
-        self.storage = storage
+    private let remoteStore: PatternRemoteStoreProtocol
+
+    init(remoteStore: PatternRemoteStoreProtocol) {
+        self.remoteStore = remoteStore
     }
     
-    func fetchAllPatterns() throws -> [PatternModel] {
-        try storage.getAllPatterns()
+    func fetchAllPatterns(completion: @escaping (Result<[PatternModel], Error>) -> Void) {
+        remoteStore.fetchAll(completion: completion)
     }
     
-    func updatePattern(_ model: PatternModel) throws {
-        try storage.updatePattern(model)
+    func updatePattern(_ pattern: PatternModel, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        remoteStore.save(pattern, completion: completion)
     }
     
-    func deletePattern(_ model: PatternModel) throws {
-        try storage.removePattern(model)
+    func deletePattern(_ pattern: PatternModel, completion: ((Result<Void, Error>) -> Void)? = nil) {
+        remoteStore.delete(id: pattern.id, completion: completion)
     }
     
-    func incrementViews(for model: PatternModel) throws {
-        try storage.incrementViewCounterFor(model: model)
+    func incrementViewCounterFor(_ model: PatternModel, completion: ((Result<Void, Error>) -> Void)?) {
+        remoteStore.incrementViewCounterFor(model, completion: completion)
     }
+    
+//    func incrementViews(for model: PatternModel) throws {
+//        try storage.incrementViewCounterFor(model: model)
+//    }
 }
