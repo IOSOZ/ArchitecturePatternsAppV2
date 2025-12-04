@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import UIKit
 
 final class SeedLoader {
     private let remoteStore = PatternRemoteRealtimeStore()
@@ -27,12 +27,19 @@ final class SeedLoader {
         
         for seed in seeds {
             
+            var imageData: Data? = nil
+            if let imageName = seed.imageName,
+               let uiImage = UIImage(named: imageName),
+               let data = uiImage.pngData() {
+                imageData = data
+            }
+            
             let model = PatternModel(
                 id: UUID(),
                 type: seed.type,
                 name: seed.name,
                 description: seed.description,
-                image: nil,
+                image: imageData,
                 viewCounter: 0,
                 isFavorite: false
             )

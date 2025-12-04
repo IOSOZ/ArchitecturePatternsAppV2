@@ -11,17 +11,17 @@
 //
 
 class FavoriteWorker {
-    private let storage: PatternStorageProtocol
-    
-    init(storage: PatternStorageProtocol) {
-        self.storage = storage
+    private let remoteStore: PatternRemoteStoreProtocol
+
+    init(remoteStore: PatternRemoteStoreProtocol) {
+        self.remoteStore = remoteStore
     }
     
-    func fetchFavoritePatterns() throws -> [PatternModel] {
-        try storage.getFavoritePatterns()
+    func fetchFavPatterns(completion: @escaping (Result<[PatternModel], Error>) -> Void) {
+        remoteStore.fetchFavorite(completion: completion)
     }
     
-    func incrementViews(for model: PatternModel) throws {
-        try storage.incrementViewCounterFor(model: model)
+    func incrementViewCounterFor(_ model: PatternModel, completion: ((Result<Void, Error>) -> Void)?) {
+        remoteStore.incrementViewCounterFor(model, completion: completion)
     }
 }

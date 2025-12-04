@@ -196,8 +196,8 @@
 			isa = PBXGroup;
 			children = (
 				6C71C20C2ED6436600E598BB /* Scenes */,
-				6C994E4F2EA80DB8009BDF39 /* App */,
 				6C994E512EA80EA1009BDF39 /* Core */,
+				6C994E4F2EA80DB8009BDF39 /* App */,
 			);
 			path = CleanSwift;
 			sourceTree = "<group>";

@@ -162,7 +162,7 @@ extension DesignPatternsViewController: DesignPatternsDisplayLogic {
         else { return }
         
         sections[indexPath.section].rows[indexPath.row] = viewModel.updatedRow
-        tableView.reloadRows(at: [indexPath], with: .automatic)
+        tableView.reloadRows(at: [indexPath], with: .none)
     }
     
     func displayDelete(viewModel: DesignPatterns.RowDelete.ViewModel) {
@@ -176,7 +176,7 @@ extension DesignPatternsViewController: DesignPatternsDisplayLogic {
         
         if sections[indexPath.section].rows.isEmpty {
             sections.remove(at: indexPath.section)
-            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
+            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
         } else {
             tableView.deleteRows(at: [indexPath], with: .none)
         }

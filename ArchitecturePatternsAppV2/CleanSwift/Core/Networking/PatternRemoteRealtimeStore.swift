@@ -14,6 +14,7 @@ protocol PatternRemoteStoreProtocol {
     func delete(id: UUID, completion: ((Result<Void, Error>) -> Void)?)
     func incrementViewCounterFor(_ model: PatternModel, completion: ((Result<Void, Error>) -> Void)?)
     func getPatternByID(_ id: UUID, completion: @escaping ((Result<PatternModel, Error>) -> Void))
+    func fetchFavorite(completion: @escaping (Result<[PatternModel], Error>) -> Void)
 }
 
 final class PatternRemoteRealtimeStore: PatternRemoteStoreProtocol {
@@ -44,6 +45,27 @@ final class PatternRemoteRealtimeStore: PatternRemoteStoreProtocol {
             completion(.failure(error))
         }
 
+    }
+    func fetchFavorite(completion: @escaping (Result<[PatternModel], Error>) -> Void) {
+    
+        let query = ref.queryOrdered(byChild: "isFavorite").queryEqual(toValue: true)
+        
+        query.observeSingleEvent(of: .value) { snapshot in
+            var result: [PatternModel] = []
+            
+            for child in snapshot.children {
+                guard let snap = child as? DataSnapshot,
+                      let model = PatternModel(snapshot: snap) else {
+                    continue
+                }
+                result.append(model)
+            }
+            
+            completion(.success(result))
+            
+        } withCancel: { error in
+            completion(.failure(error))
+        }
     }
     
     func save(_ model: PatternModel, completion: ((Result<Void, Error>) -> Void)? = nil) {

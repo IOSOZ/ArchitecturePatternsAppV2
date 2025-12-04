@@ -35,13 +35,22 @@ class FavoriteInteractor: FavoriteBusinessLogic, FavoriteDataStore {
     }
     
     func loadFavoritePatterns(request: Favorite.LoadList.Request) {
-        do {
-            let favPatterns = try worker.fetchFavoritePatterns()
-            rows = favPatterns
-            let response = Favorite.LoadList.Response(patterns: favPatterns)
-            presenter?.presentFavorite(response: response)
-        } catch {
-            // Тут можно обработать ошибку
+        worker.fetchFavPatterns { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let favPatterns):
+                
+                self.rows = favPatterns
+                let response = Favorite.LoadList.Response(patterns: favPatterns)
+                
+                DispatchQueue.main.async {
+                    self.presenter?.presentFavorite(response: response)
+                }
+                
+            case .failure(let error):
+                print("loadPattern failed", error)
+            }
         }
     }
     
@@ -50,11 +59,10 @@ class FavoriteInteractor: FavoriteBusinessLogic, FavoriteDataStore {
         guard rows.indices.contains(indexPath.row) else { return }
         selectedPattern = rows[indexPath.row]
         
-        
-        do {
-            try worker.incrementViews(for: selectedPattern!)
-        } catch {
-            // Тут можно обработать ошибку
+        worker.incrementViewCounterFor(selectedPattern!) { result in
+            if case let .failure(error) = result {
+                print("incrementCounter failed", error)
+            }
         }
     }
 }

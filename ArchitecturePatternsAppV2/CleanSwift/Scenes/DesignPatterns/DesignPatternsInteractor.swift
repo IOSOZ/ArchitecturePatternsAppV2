@@ -98,7 +98,6 @@ final class DesignPatternsInteractor: DesignPatternsBusinessLogic, DesignPattern
     }
 }
 
-#warning("Глубже осознать")
 private extension DesignPatternsInteractor {
     static func makeSections(from all: [PatternModel]) -> [[PatternModel]] {
         let grouped = Dictionary(grouping: all, by: {$0.type})

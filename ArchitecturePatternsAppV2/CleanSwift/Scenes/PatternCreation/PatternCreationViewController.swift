@@ -59,14 +59,15 @@ class PatternCreationViewController: RootViewController {
         router?.showImageSourceAlert()
     }
     
-    func savePattern() {
+    // MARK: - PrivateMethods
+    private func savePattern() {
         if let type = selectedType, let name = patternNameTextField.text, name != "" {
             let newPattern = PatternModel(
                 id: UUID(),
                 type: type,
                 name: name,
                 description: patternDescription.text,
-                image: patternImage.image?.pngData(),
+                image: patternImage.image?.jpegData(compressionQuality: 0.3),
                 viewCounter: 0,
                 isFavorite: false
             )
@@ -79,7 +80,7 @@ class PatternCreationViewController: RootViewController {
 }
 
 
-// MARK: - Private Methods
+// MARK: - PrivateMethods
 private extension PatternCreationViewController {
     
     // MARK: - Setup View
@@ -205,7 +206,7 @@ private extension PatternCreationViewController {
             make.leading.trailing.equalToSuperview().inset(16)
         }
     }
-    
+  
     // MARK: - Open Photo Gallery
     func openPhotoGallery() {
         var config = PHPickerConfiguration(photoLibrary: .shared())

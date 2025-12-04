@@ -26,11 +26,9 @@ struct GlobalBuilder {
     private static var remoteStorage:  PatternRemoteStoreProtocol!
     
     static func configure(
-        storage: PatternStorageProtocol,
         container: ContainerViewController,
         remoteStorage: PatternRemoteStoreProtocol
     ) {
-        self.storage = storage
         self.container = container
         self.remoteStorage = remoteStorage
     }
@@ -58,7 +56,7 @@ struct GlobalBuilder {
             
         case .favorite:
             let view = FavoriteViewController()
-            let interactor = FavoriteInteractor(worker: FavoriteWorker(storage: storage))
+            let interactor = FavoriteInteractor(worker: FavoriteWorker(remoteStore: remoteStorage))
             let router = FavoriteRouter()
             let presenter = FavoritePresenter()
             
@@ -90,7 +88,7 @@ struct GlobalBuilder {
             return view
         case .patternCreation:
             let view = PatternCreationViewController()
-            let interactor = PatternCreationNewInteractor(worker: PatternCreationWorker(remoteStore: remoteStorage, dataStore: storage))
+            let interactor = PatternCreationNewInteractor(worker: PatternCreationWorker(remoteStore: remoteStorage))
             let router = PatternCreationRouter()
             
             view.interactor = interactor

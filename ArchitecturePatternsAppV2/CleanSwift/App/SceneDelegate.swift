@@ -16,11 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let containerVC = ContainerViewController()
-        let storage = StorageManager()
         let remoteStorage = PatternRemoteRealtimeStore()
         
         GlobalBuilder.configure(
-            storage: storage,
             container: containerVC,
             remoteStorage: remoteStorage
         )

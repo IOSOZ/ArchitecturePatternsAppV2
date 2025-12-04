@@ -61,21 +61,26 @@ extension PatternModel {
         self.description = viewModel.description
         self.isFavorite = viewModel.isFavorite
         self.viewCounter = viewModel.viewCounter
-        self.image = viewModel.image.pngData()
+        self.image = viewModel.image.jpegData(compressionQuality: 0.3)
     }
 }
 
 extension PatternModel {
     var rtdbDictionary: [String: Any] {
-        [
+        var dict: [String: Any] = [
             "id": id.uuidString,
             "type": type.raw,
             "name": name,
             "description": description ?? "",
             "viewCounter": viewCounter,
-            "isFavorite": isFavorite,
-            "image": image?.description ?? ""
+            "isFavorite": isFavorite
         ]
+        
+        if let imageData = image {
+            dict["imageBase64"] = imageData.base64EncodedString()
+        }
+        
+        return dict
     }
     
     init?(snapshot: DataSnapshot) {
@@ -86,6 +91,7 @@ extension PatternModel {
             let typeString = dict["type"] as? String,
             let type = PatternType(raw: typeString),
             let name = dict["name"] as? String
+                
         else { return nil }
           
         self.id = id
@@ -95,6 +101,15 @@ extension PatternModel {
         self.image = nil
         self.viewCounter = dict["viewCounter"] as? Int ?? 0
         self.isFavorite = dict["isFavorite"] as? Bool ?? false
+        
+        if
+            let base64 = dict["imageBase64"] as? String,
+            let data = Data(base64Encoded: base64)
+        {
+            self.image = data
+        } else {
+            self.image = nil
+        }
     
     }
 }

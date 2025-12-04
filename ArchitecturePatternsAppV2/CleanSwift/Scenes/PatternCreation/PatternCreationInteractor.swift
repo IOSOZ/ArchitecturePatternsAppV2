@@ -25,7 +25,8 @@ class PatternCreationNewInteractor: PatternCreationBusinessLogic {
     func createNewPattern(request: PatternCreation.AddNewPattern.Request) {
         let newPattern = request.newPattern
         
-       worker.addNewPatternRemote(newPattern) { result in
+        
+       worker.addNewPattern(newPattern) { result in
             switch result {
             case .success():
                 print ("Pattern was created")
@@ -33,13 +34,6 @@ class PatternCreationNewInteractor: PatternCreationBusinessLogic {
                 print ("Pattern was created", error)
             }
             
-        }
-        
-        do {
-            try worker.addNewPatternLocal(newPattern)
-        } catch {
-            print("Error local create new Pattern")
-        }
-        
+        }    
     }
 }
